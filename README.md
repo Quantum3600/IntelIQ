@@ -16,7 +16,7 @@ This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop (JVM
   The most important subfolder is [commonMain](./core/src/commonMain/kotlin). If preferred, you
   can add code to the platform-specific folders here too.
 
-* [/server](./server/src/main/kotlin) is for the Ktor server application.
+* [/server](./server/src/main/kotlin) is for the Ktor server application. 
 
 ### Running the apps
 

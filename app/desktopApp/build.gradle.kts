@@ -20,7 +20,7 @@ compose.desktop {
         mainClass = "com.techbrains.inteliq.MainKt"
 
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Exe, TargetFormat.Deb)
             packageName = "com.techbrains.inteliq"
             packageVersion = "1.0.0"
         }

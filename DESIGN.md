@@ -221,9 +221,6 @@ One deliberate moment per major action, not ambient motion everywhere:
 
 ## 8. What to actively avoid
 
-- No mascot character driving copy or empty states (Duolingo's strongest
-  brand asset, but it would fight the "real model, real data" identity
-  here).
 - No infinite streak-guilt mechanics (streak freezes/insurance upsells) —
   keep the daily goal encouraging, not punitive.
 - No dense, code-editor-cold Practice screen with zero warmth — difficulty

@@ -82,7 +82,7 @@ fun App() {
                 }
             }
         }
-        val authApi = remember { AuthApiImpl(client = httpClient) }
+        val authApi = remember { AuthApiImpl(client = httpClient, baseUrl = getPlatform().defaultBaseUrl) }
         val tokenStorage = remember { InMemoryTokenStorage() }
         val sessionLocalDataSource = remember { InMemoryUserSessionLocalDataSource() }
         val authRepository = remember {

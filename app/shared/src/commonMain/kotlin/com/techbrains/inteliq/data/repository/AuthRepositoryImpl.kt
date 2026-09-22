@@ -33,7 +33,7 @@ class AuthRepositoryImpl(
             val user = response.user.toDomain()
             _authState.value = AuthState.Authenticated(user)
             user
-        }
+        }.mapError()
     }
 
     override suspend fun register(
@@ -52,7 +52,7 @@ class AuthRepositoryImpl(
             val user = response.user.toDomain()
             _authState.value = AuthState.Authenticated(user)
             user
-        }
+        }.mapError()
     }
 
     override suspend fun logout(): Result<Unit> {
@@ -79,6 +79,20 @@ class AuthRepositoryImpl(
 
     override suspend fun getAccessToken(): String? {
         return tokenStorage.getAccessToken()
+    }
+
+    private fun <T> Result<T>.mapError(): Result<T> {
+        return fold(
+            onSuccess = { Result.success(it) },
+            onFailure = { throwable ->
+                val msg = throwable.message.orEmpty().lowercase()
+                if (msg.contains("refused") || msg.contains("getsocketopt") || msg.contains("connect") || msg.contains("unresolved")) {
+                    Result.failure(IllegalStateException("Unable to connect to backend server. Please ensure Ktor server is running."))
+                } else {
+                    Result.failure(throwable)
+                }
+            }
+        )
     }
 
     private fun UserDto.toDomain(): User {

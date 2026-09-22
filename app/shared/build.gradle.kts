@@ -71,14 +71,15 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.kotlinx.coroutinesCore)
             implementation(libs.kotlinx.serializationJson)
-            implementation(libs.ktor.clientCore)
-            implementation(libs.ktor.clientContentNegotiation)
-            implementation(libs.ktor.serializationKotlinxJson)
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.cio)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutinesTest)
-            implementation(libs.ktor.clientMock)
+            implementation(libs.ktor.client.mock)
         }
         jsMain.dependencies {
             implementation(libs.wrappers.browser)

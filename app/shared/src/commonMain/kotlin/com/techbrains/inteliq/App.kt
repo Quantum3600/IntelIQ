@@ -4,30 +4,30 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
+import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
@@ -56,7 +56,6 @@ import com.techbrains.inteliq.presentation.splash.SplashScreen
 import com.techbrains.inteliq.presentation.theme.Flame
 import com.techbrains.inteliq.presentation.theme.Ink
 import com.techbrains.inteliq.presentation.theme.IntelIQTheme
-import com.techbrains.inteliq.presentation.theme.Paper
 import com.techbrains.inteliq.presentation.theme.PaperRaised
 import com.techbrains.inteliq.presentation.theme.Signal
 import com.techbrains.inteliq.presentation.theme.SignalDim
@@ -161,30 +160,71 @@ fun MainAppShell(
     onTabSelected: (ScreenDestination.Main) -> Unit,
     onLogout: () -> Unit
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBarWithStreakAndXP()
-        },
-        bottomBar = {
-            BottomNavigationBar(
-                currentTab = currentTab,
-                onTabSelected = onTabSelected
-            )
-        }
-    ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
-            when (currentTab) {
-                is ScreenDestination.Main.Home -> DashboardScreen()
-                is ScreenDestination.Main.Path -> CoursesScreen()
-                is ScreenDestination.Main.Practice -> QuizScreen()
-                is ScreenDestination.Main.Progress -> ProgressScreen()
-                is ScreenDestination.Main.Profile -> ProfileScreen(onLogout = onLogout)
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val isWideScreen = maxWidth >= 600.dp
+
+        if (isWideScreen) {
+            Row(modifier = Modifier.fillMaxSize()) {
+                SideNavigationRail(
+                    currentTab = currentTab,
+                    onTabSelected = onTabSelected
+                )
+                Scaffold(
+                    modifier = Modifier.weight(1f),
+                    topBar = {
+                        TopAppBarWithStreakAndXP()
+                    }
+                ) { innerPadding ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                    ) {
+                        MainTabContent(
+                            currentTab = currentTab,
+                            onLogout = onLogout
+                        )
+                    }
+                }
+            }
+        } else {
+            Scaffold(
+                topBar = {
+                    TopAppBarWithStreakAndXP()
+                },
+                bottomBar = {
+                    BottomNavigationBar(
+                        currentTab = currentTab,
+                        onTabSelected = onTabSelected
+                    )
+                }
+            ) { innerPadding ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                ) {
+                    MainTabContent(
+                        currentTab = currentTab,
+                        onLogout = onLogout
+                    )
+                }
             }
         }
+    }
+}
+
+@Composable
+private fun MainTabContent(
+    currentTab: ScreenDestination.Main,
+    onLogout: () -> Unit
+) {
+    when (currentTab) {
+        is ScreenDestination.Main.Home -> DashboardScreen()
+        is ScreenDestination.Main.Path -> CoursesScreen()
+        is ScreenDestination.Main.Practice -> QuizScreen()
+        is ScreenDestination.Main.Progress -> ProgressScreen()
+        is ScreenDestination.Main.Profile -> ProfileScreen(onLogout = onLogout)
     }
 }
 
@@ -309,6 +349,69 @@ fun BottomNavigationBar(
                 )
             )
         }
+    }
+}
+
+@Composable
+fun SideNavigationRail(
+    currentTab: ScreenDestination.Main,
+    onTabSelected: (ScreenDestination.Main) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val items = remember {
+        listOf(
+            NavigationTabItem("Home", "🏠", ScreenDestination.Main.Home),
+            NavigationTabItem("Path", "🗺️", ScreenDestination.Main.Path),
+            NavigationTabItem("Practice", "🎯", ScreenDestination.Main.Practice),
+            NavigationTabItem("Progress", "📊", ScreenDestination.Main.Progress),
+            NavigationTabItem("Profile", "👤", ScreenDestination.Main.Profile)
+        )
+    }
+
+    NavigationRail(
+        modifier = modifier,
+        containerColor = PaperRaised,
+        contentColor = Ink,
+        header = {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "IQ",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = Signal
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+        }
+    ) {
+        Spacer(modifier = Modifier.weight(1f))
+        items.forEach { item ->
+            val isSelected = currentTab == item.destination
+            NavigationRailItem(
+                selected = isSelected,
+                onClick = { onTabSelected(item.destination) },
+                icon = {
+                    Text(
+                        text = item.icon,
+                        fontSize = 18.sp
+                    )
+                },
+                label = {
+                    Text(
+                        text = item.title,
+                        fontSize = 12.sp,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                    )
+                },
+                colors = NavigationRailItemDefaults.colors(
+                    selectedIconColor = Signal,
+                    selectedTextColor = Signal,
+                    indicatorColor = SignalDim,
+                    unselectedIconColor = Ink.copy(alpha = 0.6f),
+                    unselectedTextColor = Ink.copy(alpha = 0.6f)
+                )
+            )
+        }
+        Spacer(modifier = Modifier.weight(1f))
     }
 }
 

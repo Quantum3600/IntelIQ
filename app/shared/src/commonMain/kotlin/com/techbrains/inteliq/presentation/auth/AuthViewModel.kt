@@ -3,6 +3,8 @@ package com.techbrains.inteliq.presentation.auth
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.techbrains.inteliq.domain.model.AuthState
+import com.techbrains.inteliq.domain.model.User
+import com.techbrains.inteliq.model.UserRole
 import com.techbrains.inteliq.domain.usecase.GetAuthStateUseCase
 import com.techbrains.inteliq.domain.usecase.LoginUseCase
 import com.techbrains.inteliq.domain.usecase.RegisterUseCase
@@ -70,6 +72,18 @@ class AuthViewModel(
             }
             is AuthIntent.SubmitAuth -> {
                 submitAuth()
+            }
+            is AuthIntent.DebugSkipAuth -> {
+                val debugUser = User(
+                    id = "debug-001",
+                    email = "student@inteliq.edu",
+                    name = "Debug Student",
+                    role = UserRole.STUDENT
+                )
+                _uiState.update { it.copy(isLoading = false, authenticatedUser = debugUser, errorMessage = null) }
+                viewModelScope.launch {
+                    _eventFlow.emit(AuthSingleEvent.NavigateToHome(debugUser))
+                }
             }
             is AuthIntent.ClearError -> {
                 _uiState.update { it.copy(errorMessage = null) }

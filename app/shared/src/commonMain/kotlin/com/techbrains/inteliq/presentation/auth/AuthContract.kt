@@ -21,6 +21,7 @@ sealed interface AuthIntent {
     data class RoleChanged(val role: UserRole) : AuthIntent
     data object ToggleAuthMode : AuthIntent
     data object SubmitAuth : AuthIntent
+    data object DebugSkipAuth : AuthIntent
     data object ClearError : AuthIntent
 }
 

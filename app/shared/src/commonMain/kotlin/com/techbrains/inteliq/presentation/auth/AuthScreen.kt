@@ -2,6 +2,8 @@ package com.techbrains.inteliq.presentation.auth
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +15,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.style.ExperimentalFoundationStyleApi
+import androidx.compose.foundation.style.rememberUpdatedStyleState
+import androidx.compose.foundation.style.styleable
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -24,14 +29,17 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.techbrains.inteliq.presentation.theme.ComponentStyles
 import com.techbrains.inteliq.presentation.theme.Ink
 import com.techbrains.inteliq.presentation.theme.Paper
 import com.techbrains.inteliq.presentation.theme.PaperRaised
@@ -210,6 +218,37 @@ fun AuthScreen(
                             color = Signal
                         )
                     }
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // Debug Backend Bypass Button
+                @OptIn(ExperimentalFoundationStyleApi::class)
+                val debugInteractionSource = remember { MutableInteractionSource() }
+                @OptIn(ExperimentalFoundationStyleApi::class)
+                val debugStyleState = rememberUpdatedStyleState(debugInteractionSource)
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(8.dp))
+                        .clickable(
+                            interactionSource = debugInteractionSource,
+                            indication = null,
+                            onClick = { onIntent(AuthIntent.DebugSkipAuth) }
+                        )
+                        .styleable(
+                            styleState = debugStyleState,
+                            style = ComponentStyles.debugButtonStyle
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "🐛 Skip to App (Debug Mode)",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Ink
+                    )
                 }
             }
         }

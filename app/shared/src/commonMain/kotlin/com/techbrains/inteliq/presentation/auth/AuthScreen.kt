@@ -1,7 +1,10 @@
 package com.techbrains.inteliq.presentation.auth
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -150,7 +153,7 @@ fun AuthScreen(
         }
 
         // Top Header Theme Toggle for Desktop and Web
-        if (onToggleDarkTheme != null) {
+        if (onToggleDarkTheme != null && isWideScreen) {
             Surface(
                 onClick = onToggleDarkTheme,
                 shape = RoundedCornerShape(24.dp),
@@ -305,14 +308,13 @@ fun AuthFormPane(
     val formShape = if (isWideScreen) {
         RoundedCornerShape(topStart = 32.dp, bottomStart = 32.dp, topEnd = 8.dp, bottomEnd = 8.dp)
     } else {
-        RoundedCornerShape(48.dp, 48.dp, 38.dp, 38.dp)
+        RoundedCornerShape(topStart = 48.dp, topEnd = 48.dp, bottomStart = 36.dp, bottomEnd = 36.dp)
     }
 
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .then(if (isWideScreen) Modifier.fillMaxHeight() else Modifier)
-            .animateContentSize(alignment = Alignment.BottomCenter),
+            .then(if (isWideScreen) Modifier.fillMaxHeight() else Modifier),
         shape = formShape,
         color = colors.surface,
         border = BorderStroke(2.5.dp, strokeColor)
@@ -334,7 +336,11 @@ fun AuthFormPane(
                 verticalArrangement = if (isWideScreen) Arrangement.Center else Arrangement.Top
             ) {
                 // Error Banner
-                AnimatedVisibility(visible = state.errorMessage != null) {
+                AnimatedVisibility(
+                    visible = state.errorMessage != null,
+                    enter = expandVertically(expandFrom = Alignment.Top) + fadeIn(),
+                    exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut()
+                ) {
                     state.errorMessage?.let { msg ->
                         Surface(
                             modifier = Modifier
@@ -388,7 +394,11 @@ fun AuthFormPane(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Full Name field (Registering mode)
-                AnimatedVisibility(visible = state.isRegistering) {
+                AnimatedVisibility(
+                    visible = state.isRegistering,
+                    enter = expandVertically(expandFrom = Alignment.Top) + fadeIn(),
+                    exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut()
+                ) {
                     Column {
                         NeobrutalistTextField(
                             value = state.name,
@@ -532,7 +542,7 @@ fun AuthFormPane(
                         ) {
                             Text(
                                 text = if (state.isRegistering) "CREATE ACCOUNT" else "SIGN IN",
-                                style = MaterialTheme.typography.labelLarge,
+                                style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = LocalContentColor.current
                             )

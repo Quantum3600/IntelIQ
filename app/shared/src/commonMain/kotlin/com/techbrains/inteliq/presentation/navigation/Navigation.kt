@@ -24,7 +24,7 @@ sealed interface ScreenDestination {
     data class AnswerFeedback(val attemptId: String) : ScreenDestination
 }
 
-class Navigator(initialDestination: ScreenDestination = ScreenDestination.Splash) {
+class Navigator(initialDestination: ScreenDestination = ScreenDestination.Auth) {
     var currentDestination by mutableStateOf<ScreenDestination>(initialDestination)
         private set
 
@@ -40,6 +40,6 @@ class Navigator(initialDestination: ScreenDestination = ScreenDestination.Splash
 }
 
 @Composable
-fun rememberNavigator(initialDestination: ScreenDestination = ScreenDestination.Splash): Navigator {
+fun rememberNavigator(initialDestination: ScreenDestination = ScreenDestination.Auth): Navigator {
     return remember { Navigator(initialDestination) }
 }

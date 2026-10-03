@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,8 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.techbrains.inteliq.presentation.theme.Ink
-import com.techbrains.inteliq.presentation.theme.Paper
 
 @Composable
 fun CoursesScreen(
@@ -26,7 +25,7 @@ fun CoursesScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Paper)
+            .background(MaterialTheme.colorScheme.background)
             .padding(24.dp)
     ) {
         Column(
@@ -37,7 +36,7 @@ fun CoursesScreen(
                 text = "Skill Mastery Path",
                 fontSize = 26.sp,
                 fontWeight = FontWeight.Bold,
-                color = Ink
+                color = MaterialTheme.colorScheme.onBackground
             )
 
             Spacer(modifier = Modifier.height(4.dp))
@@ -45,7 +44,7 @@ fun CoursesScreen(
             Text(
                 text = "Explore prerequisite skills and mastery levels",
                 fontSize = 15.sp,
-                color = Ink.copy(alpha = 0.7f)
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
             )
         }
     }

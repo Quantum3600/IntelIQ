@@ -1,12 +1,13 @@
 package com.techbrains.inteliq
 
-import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import dev.brahmkshatriya.betterwindow.BetterWindow
 
 fun main() = application {
-    Window(
+    BetterWindow(
         onCloseRequest = ::exitApplication,
         title = "IntelIQ",
+        allowDrawingInTitleBar = true,
     ) {
         App()
     }

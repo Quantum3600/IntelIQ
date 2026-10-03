@@ -14,6 +14,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,10 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.techbrains.inteliq.presentation.theme.Ink
-import com.techbrains.inteliq.presentation.theme.Paper
-import com.techbrains.inteliq.presentation.theme.PaperRaised
-import com.techbrains.inteliq.presentation.theme.Signal
 
 @Composable
 fun DashboardScreen(
@@ -34,7 +31,7 @@ fun DashboardScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Paper)
+            .background(MaterialTheme.colorScheme.background)
             .padding(24.dp)
     ) {
         Column(
@@ -46,7 +43,7 @@ fun DashboardScreen(
                 text = "Welcome Back!",
                 fontSize = 26.sp,
                 fontWeight = FontWeight.Bold,
-                color = Ink
+                color = MaterialTheme.colorScheme.onBackground
             )
 
             Spacer(modifier = Modifier.height(4.dp))
@@ -54,7 +51,7 @@ fun DashboardScreen(
             Text(
                 text = "Pick up where you left off",
                 fontSize = 15.sp,
-                color = Ink.copy(alpha = 0.7f)
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -63,7 +60,7 @@ fun DashboardScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = PaperRaised),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Column(
@@ -74,7 +71,7 @@ fun DashboardScreen(
                         text = "Recommended Next",
                         fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Signal
+                        color = MaterialTheme.colorScheme.primary
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -83,7 +80,7 @@ fun DashboardScreen(
                         text = "Linear Equations & Inequalities",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Ink
+                        color = MaterialTheme.colorScheme.onSurface
                     )
 
                     Spacer(modifier = Modifier.height(4.dp))
@@ -91,17 +88,17 @@ fun DashboardScreen(
                     Text(
                         text = "Targets Developing skill at suitable difficulty",
                         fontSize = 13.sp,
-                        color = Ink.copy(alpha = 0.7f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Button(
                         onClick = onStartPractice,
-                        colors = ButtonDefaults.buttonColors(containerColor = Signal),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                         shape = RoundedCornerShape(8.dp)
                     ) {
-                        Text("Start Recommended Practice", color = PaperRaised)
+                        Text("Start Recommended Practice", color = MaterialTheme.colorScheme.onPrimary)
                     }
                 }
             }

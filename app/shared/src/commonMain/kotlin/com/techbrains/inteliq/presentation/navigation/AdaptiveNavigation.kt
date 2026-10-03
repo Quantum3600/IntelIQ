@@ -16,16 +16,23 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.style.ExperimentalFoundationStyleApi
+import androidx.compose.foundation.style.rememberUpdatedStyleState
+import androidx.compose.foundation.style.styleable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Person
@@ -48,13 +55,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.techbrains.inteliq.presentation.theme.ComponentStyles
 import com.techbrains.inteliq.presentation.theme.Flame
-import com.techbrains.inteliq.presentation.theme.Ink
-import com.techbrains.inteliq.presentation.theme.PaperRaised
-import com.techbrains.inteliq.presentation.theme.Signal
-import com.techbrains.inteliq.presentation.theme.SignalDim
-import androidx.compose.foundation.style.ExperimentalFoundationStyleApi
-import androidx.compose.foundation.style.rememberUpdatedStyleState
-import androidx.compose.foundation.style.styleable
 
 /**
  * Adaptive Window Size Classification (per official Material 3 / @adaptive skill)
@@ -88,6 +88,8 @@ fun AdaptiveNavigationLayout(
     modifier: Modifier = Modifier,
     userName: String = "Student",
     userEmail: String = "student@inteliq.edu",
+    isDarkTheme: Boolean = false,
+    onToggleDarkTheme: () -> Unit = {},
     content: @Composable () -> Unit
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
@@ -101,7 +103,12 @@ fun AdaptiveNavigationLayout(
             AdaptiveWindowSizeClass.COMPACT -> {
                 // Mobile Layout: Top Header + Main Content + Floating Nav Bar at Bottom
                 Scaffold(
-                    topBar = { TopHeaderAppLogoAndStats() }
+                    topBar = {
+                        TopHeaderAppLogoAndStats(
+                            isDarkTheme = isDarkTheme,
+                            onToggleDarkTheme = onToggleDarkTheme
+                        )
+                    }
                 ) { innerPadding ->
                     Box(
                         modifier = Modifier
@@ -110,13 +117,14 @@ fun AdaptiveNavigationLayout(
                     ) {
                         content()
 
-                        // Floating Navigation Bar anchored at bottom
+                        // Floating Navigation Bar anchored at bottom with shadow clearance space
                         FloatingNavigationBar(
                             currentTab = currentTab,
                             onTabSelected = onTabSelected,
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
-                                .padding(horizontal = 20.dp, vertical = 16.dp)
+                                .navigationBarsPadding()
+                                .padding(start = 16.dp, end = 20.dp, top = 8.dp, bottom = 12.dp)
                         )
                     }
                 }
@@ -132,7 +140,12 @@ fun AdaptiveNavigationLayout(
                     )
 
                     Scaffold(
-                        topBar = { TopHeaderAppLogoAndStats() }
+                        topBar = {
+                            TopHeaderAppLogoAndStats(
+                                isDarkTheme = isDarkTheme,
+                                onToggleDarkTheme = onToggleDarkTheme
+                            )
+                        }
                     ) { innerPadding ->
                         Box(
                             modifier = Modifier
@@ -157,7 +170,12 @@ fun AdaptiveNavigationLayout(
                     )
 
                     Scaffold(
-                        topBar = { TopHeaderAppLogoAndStats() }
+                        topBar = {
+                            TopHeaderAppLogoAndStats(
+                                isDarkTheme = isDarkTheme,
+                                onToggleDarkTheme = onToggleDarkTheme
+                            )
+                        }
                     ) { innerPadding ->
                         Box(
                             modifier = Modifier
@@ -174,13 +192,18 @@ fun AdaptiveNavigationLayout(
 }
 
 /**
- * Top Header containing Logo and Streak/XP Stats
+ * Top Header containing Logo, Streak/XP Stats, and Dark/Light Mode Toggle
  */
 @Composable
-fun TopHeaderAppLogoAndStats() {
+fun TopHeaderAppLogoAndStats(
+    isDarkTheme: Boolean = false,
+    onToggleDarkTheme: () -> Unit = {}
+) {
     Surface(
-        modifier = Modifier.fillMaxWidth(),
-        color = PaperRaised,
+        modifier = Modifier
+            .fillMaxWidth()
+            .statusBarsPadding(),
+        color = MaterialTheme.colorScheme.surface,
         shadowElevation = 2.dp
     ) {
         Row(
@@ -193,13 +216,13 @@ fun TopHeaderAppLogoAndStats() {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Surface(
                     shape = RoundedCornerShape(8.dp),
-                    color = Signal,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(32.dp)
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Text(
                             text = "IQ",
-                            color = PaperRaised,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             fontWeight = FontWeight.Black,
                             fontSize = 14.sp
                         )
@@ -210,7 +233,7 @@ fun TopHeaderAppLogoAndStats() {
                     text = "IntelIQ",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Ink
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
 
@@ -235,12 +258,12 @@ fun TopHeaderAppLogoAndStats() {
                     }
                 }
 
-                Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(8.dp))
 
                 // XP Pill
                 Surface(
                     shape = RoundedCornerShape(16.dp),
-                    color = SignalDim
+                    color = MaterialTheme.colorScheme.primaryContainer
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
@@ -253,9 +276,27 @@ fun TopHeaderAppLogoAndStats() {
                             fontSize = 13.sp,
                             fontFamily = FontFamily.Monospace,
                             fontWeight = FontWeight.Bold,
-                            color = Signal
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
+                }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                // Dark / Light Mode Toggle Button
+                IconButton(
+                    onClick = onToggleDarkTheme,
+                    modifier = Modifier
+                        .size(36.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                ) {
+                    Icon(
+                        imageVector = if (isDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
+                        contentDescription = if (isDarkTheme) "Switch to Light Mode" else "Switch to Dark Mode",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
+                    )
                 }
             }
         }
@@ -263,7 +304,7 @@ fun TopHeaderAppLogoAndStats() {
 }
 
 /**
- * Floating Navigation Bar for Mobile with smooth animated inner indicator
+ * Floating Navigation Bar for Mobile with smooth animated inner indicator & shadow clearance
  */
 @OptIn(ExperimentalFoundationStyleApi::class)
 @Composable
@@ -340,7 +381,7 @@ fun FloatingNavigationBar(
                         Icon(
                             imageVector = item.icon,
                             contentDescription = item.title,
-                            tint = if (isSelected) Signal else Ink.copy(alpha = 0.7f),
+                            tint = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                             modifier = Modifier.size(20.dp)
                         )
                         Spacer(modifier = Modifier.height(2.dp))
@@ -348,7 +389,7 @@ fun FloatingNavigationBar(
                             text = item.title,
                             fontSize = 10.sp,
                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                            color = if (isSelected) Signal else Ink.copy(alpha = 0.7f)
+                            color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                         )
                     }
                 }
@@ -371,7 +412,9 @@ fun AdaptiveNavigationRail(
     Column(
         modifier = modifier
             .fillMaxHeight()
-            .width(80.dp)
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .width(84.dp)
             .styleable(
                 style = ComponentStyles.navRailStyle
             ),
@@ -382,13 +425,13 @@ fun AdaptiveNavigationRail(
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Surface(
                 shape = RoundedCornerShape(12.dp),
-                color = Signal,
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(44.dp)
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Text(
                         text = "IQ",
-                        color = PaperRaised,
+                        color = MaterialTheme.colorScheme.onPrimary,
                         fontWeight = FontWeight.Black,
                         fontSize = 18.sp
                     )
@@ -420,7 +463,7 @@ fun AdaptiveNavigationRail(
                     Icon(
                         imageVector = item.icon,
                         contentDescription = item.title,
-                        tint = if (isSelected) Signal else Ink.copy(alpha = 0.7f),
+                        tint = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                         modifier = Modifier.size(22.dp)
                     )
                 }
@@ -433,14 +476,14 @@ fun AdaptiveNavigationRail(
                 modifier = Modifier
                     .size(44.dp)
                     .clip(CircleShape)
-                    .background(SignalDim)
+                    .background(MaterialTheme.colorScheme.primaryContainer)
                     .clickable { onTabSelected(ScreenDestination.Main.Profile) },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = "Profile",
-                    tint = Signal,
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
                     modifier = Modifier.size(24.dp)
                 )
             }
@@ -464,7 +507,9 @@ fun AdaptiveNavigationDrawer(
     Column(
         modifier = modifier
             .fillMaxHeight()
-            .width(260.dp)
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .width(264.dp)
             .styleable(
                 style = ComponentStyles.navDrawerStyle
             ),
@@ -479,13 +524,13 @@ fun AdaptiveNavigationDrawer(
             ) {
                 Surface(
                     shape = RoundedCornerShape(12.dp),
-                    color = Signal,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(44.dp)
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Text(
                             text = "IQ",
-                            color = PaperRaised,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             fontWeight = FontWeight.Black,
                             fontSize = 20.sp
                         )
@@ -497,12 +542,12 @@ fun AdaptiveNavigationDrawer(
                         text = "IntelIQ",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Ink
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = "Dynamic Knowledge Tracing",
                         fontSize = 11.sp,
-                        color = Ink.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                 }
             }
@@ -532,7 +577,7 @@ fun AdaptiveNavigationDrawer(
                     Icon(
                         imageVector = item.icon,
                         contentDescription = item.title,
-                        tint = if (isSelected) Signal else Ink.copy(alpha = 0.7f),
+                        tint = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(12.dp))
@@ -540,7 +585,7 @@ fun AdaptiveNavigationDrawer(
                         text = item.title,
                         fontSize = 14.sp,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                        color = if (isSelected) Signal else Ink.copy(alpha = 0.8f)
+                        color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
                     )
                 }
             }
@@ -569,13 +614,13 @@ fun AdaptiveNavigationDrawer(
                                 modifier = Modifier
                                     .size(36.dp)
                                     .clip(CircleShape)
-                                    .background(SignalDim),
+                                    .background(MaterialTheme.colorScheme.primaryContainer),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Person,
                                     contentDescription = "User Avatar",
-                                    tint = Signal,
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
                                     modifier = Modifier.size(20.dp)
                                 )
                             }
@@ -585,12 +630,12 @@ fun AdaptiveNavigationDrawer(
                                     text = userName,
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = Ink
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
                                     text = userEmail,
                                     fontSize = 11.sp,
-                                    color = Ink.copy(alpha = 0.6f)
+                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                                 )
                             }
                         }

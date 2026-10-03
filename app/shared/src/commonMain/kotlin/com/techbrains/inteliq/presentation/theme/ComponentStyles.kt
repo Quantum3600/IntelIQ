@@ -1,142 +1,103 @@
 package com.techbrains.inteliq.presentation.theme
 
-import androidx.compose.foundation.style.ExperimentalFoundationStyleApi
 import androidx.compose.foundation.style.Style
-import androidx.compose.foundation.style.border
-import androidx.compose.foundation.style.contentPadding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.shadow.Shadow
-import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.techbrains.inteliq.presentation.theme.styles.ButtonGroupPosition
+import com.techbrains.inteliq.presentation.theme.styles.ButtonStyles
+import com.techbrains.inteliq.presentation.theme.styles.CardStyles
+import com.techbrains.inteliq.presentation.theme.styles.ChipStyles
+import com.techbrains.inteliq.presentation.theme.styles.ListItemPosition
+import com.techbrains.inteliq.presentation.theme.styles.NavigationStyles
+import com.techbrains.inteliq.presentation.theme.styles.SwitchStyles
+import com.techbrains.inteliq.presentation.theme.styles.TextFieldStyles
 
-@OptIn(ExperimentalFoundationStyleApi::class)
+/** Re-export position enums for backward compatibility */
+typealias ListItemPosition = ListItemPosition
+typealias ButtonGroupPosition = ButtonGroupPosition
+
+/**
+ * Unified facade object delegating to modular style files in `presentation/theme/styles/`.
+ *
+ * Direct style files for quick editing & debugging:
+ * - [ButtonStyles]    -> `presentation/theme/styles/ButtonStyles.kt`
+ * - [NavigationStyles]-> `presentation/theme/styles/NavigationStyles.kt`
+ * - [CardStyles]      -> `presentation/theme/styles/CardStyles.kt`
+ * - [TextFieldStyles] -> `presentation/theme/styles/TextFieldStyles.kt`
+ * - [SwitchStyles]    -> `presentation/theme/styles/SwitchStyles.kt`
+ * - [ChipStyles]      -> `presentation/theme/styles/ChipStyles.kt`
+ */
 object ComponentStyles {
 
-    /** Neobrutalist Floating Navigation Bar Container Style */
     val floatingNavBarStyle: Style
-        @Composable get() {
-            val colors = MaterialTheme.colorScheme
-            val shapes = MaterialTheme.shapes
-            return Style {
-                background(colors.surface)
-                shape(shapes.large)
-                border(2.dp, colors.onBackground)
-                dropShadow(Shadow(color = colors.onBackground, offset = DpOffset(4.dp, 4.dp), radius = 0.dp))
-                contentPadding(horizontal = 12.dp, vertical = 8.dp)
-            }
-        }
+        @Composable get() = NavigationStyles.floatingNavBarStyle
 
-    /** Inner Animated Selection Indicator Style */
     val navIndicatorStyle: Style
-        @Composable get() {
-            val colors = MaterialTheme.colorScheme
-            val shapes = MaterialTheme.shapes
-            return Style {
-                background(colors.primaryContainer)
-                shape(shapes.medium)
-                border(1.5.dp, colors.primary)
-            }
-        }
+        @Composable get() = NavigationStyles.navIndicatorStyle
 
-    /** Neobrutalist Navigation Rail Style */
     val navRailStyle: Style
-        @Composable get() {
-            val colors = MaterialTheme.colorScheme
-            return Style {
-                background(colors.surface)
-                border(2.dp, colors.onBackground)
-                dropShadow(Shadow(color = colors.onBackground, offset = DpOffset(4.dp, 0.dp), radius = 0.dp))
-                contentPadding(vertical = 16.dp, horizontal = 8.dp)
-            }
-        }
+        @Composable get() = NavigationStyles.navRailStyle
 
-    /** Neobrutalist Navigation Drawer Style */
     val navDrawerStyle: Style
-        @Composable get() {
-            val colors = MaterialTheme.colorScheme
-            return Style {
-                background(colors.surface)
-                border(2.dp, colors.onBackground)
-                dropShadow(Shadow(color = colors.onBackground, offset = DpOffset(4.dp, 0.dp), radius = 0.dp))
-                contentPadding(16.dp)
-            }
-        }
+        @Composable get() = NavigationStyles.navDrawerStyle
 
-    /** Navigation Item Style */
     val navItemStyle: Style
-        @Composable get() {
-            val colors = MaterialTheme.colorScheme
-            val shapes = MaterialTheme.shapes
-            return Style {
-                shape(shapes.medium)
-                contentPadding(horizontal = 12.dp, vertical = 10.dp)
-                if (state.isPressed) {
-                    background(colors.surfaceVariant)
-                }
-            }
-        }
+        @Composable get() = NavigationStyles.navItemStyle
 
-    /** Selected Navigation Item Style */
     val selectedNavItemStyle: Style
-        @Composable get() {
-            val colors = MaterialTheme.colorScheme
-            val shapes = MaterialTheme.shapes
-            return Style {
-                background(colors.primaryContainer)
-                shape(shapes.medium)
-                border(1.5.dp, colors.primary)
-                contentPadding(horizontal = 12.dp, vertical = 10.dp)
-            }
-        }
+        @Composable get() = NavigationStyles.selectedNavItemStyle
 
-    /** Profile Card in Drawer/Rail Style */
     val profileCardStyle: Style
-        @Composable get() {
-            val colors = MaterialTheme.colorScheme
-            val shapes = MaterialTheme.shapes
-            return Style {
-                background(colors.surfaceVariant)
-                shape(shapes.medium)
-                border(2.dp, colors.onBackground)
-                dropShadow(Shadow(color = colors.onBackground, offset = DpOffset(3.dp, 3.dp), radius = 0.dp))
-                contentPadding(12.dp)
-            }
-        }
+        @Composable get() = NavigationStyles.profileCardStyle
 
-    /** Neobrutalist Primary Action Button Style */
     val primaryButtonStyle: Style
-        @Composable get() {
-            val colors = MaterialTheme.colorScheme
-            val typography = MaterialTheme.typography
-            val shapes = MaterialTheme.shapes
-            return Style {
-                background(if (state.isEnabled) colors.primary else colors.surfaceVariant)
-                shape(shapes.small)
-                border(2.dp, colors.onBackground)
-                textStyle(typography.labelLarge)
-                contentPadding(horizontal = 16.dp, vertical = 12.dp)
+        @Composable get() = ButtonStyles.primaryButtonStyle
 
-                val shadowOffset = if (state.isPressed) DpOffset(1.dp, 1.dp) else if (state.isEnabled) DpOffset(4.dp, 4.dp) else DpOffset(0.dp, 0.dp)
-                dropShadow(Shadow(color = colors.onBackground, offset = shadowOffset, radius = 0.dp))
-            }
-        }
+    @Composable
+    fun primaryButtonStyle(shape: Shape): Style =
+        ButtonStyles.primaryButtonStyle(shape = shape)
 
-    /** Debug Backend Bypass Button Style */
     val debugButtonStyle: Style
-        @Composable get() {
-            val colors = MaterialTheme.colorScheme
-            val typography = MaterialTheme.typography
-            val shapes = MaterialTheme.shapes
-            return Style {
-                background(colors.secondary)
-                shape(shapes.small)
-                border(2.dp, colors.onBackground)
-                textStyle(typography.labelMedium)
-                contentPadding(horizontal = 16.dp, vertical = 10.dp)
+        @Composable get() = ButtonStyles.debugButtonStyle
 
-                val shadowOffset = if (state.isPressed) DpOffset(1.dp, 1.dp) else DpOffset(3.dp, 3.dp)
-                dropShadow(Shadow(color = colors.onBackground, offset = shadowOffset, radius = 0.dp))
-            }
-        }
+    @Composable
+    fun debugButtonStyle(shape: Shape): Style =
+        ButtonStyles.debugButtonStyle(shape = shape)
+
+    val listItemCardStyle: Style
+        @Composable get() = CardStyles.listItemCardStyle
+
+    @Composable
+    fun cardStyle(shape: Shape): Style =
+        CardStyles.cardStyle(shape = shape)
+
+    val textFieldStyle: Style
+        @Composable get() = TextFieldStyles.textFieldStyle
+
+    @Composable
+    fun textFieldStyle(shape: Shape): Style =
+        TextFieldStyles.textFieldStyle(shape)
+
+    @Composable
+    fun switchTrackStyle(isChecked: Boolean): Style =
+        SwitchStyles.switchTrackStyle(isChecked)
+
+    @Composable
+    fun switchThumbStyle(isChecked: Boolean): Style =
+        SwitchStyles.switchThumbStyle(isChecked)
+
+    @Composable
+    fun chipStyle(isSelected: Boolean = false, containerColor: Color? = null, shapeCorner: Dp = 100.dp): Style =
+        ChipStyles.chipStyle(isSelected, containerColor, shapeCorner)
+
+    @Composable
+    fun groupedListItemStyle(position: ListItemPosition): Style =
+        CardStyles.groupedListItemStyle(position)
+
+    @Composable
+    fun buttonGroupStyle(position: ButtonGroupPosition, isSelected: Boolean = false): Style =
+        ButtonStyles.buttonGroupStyle(position, isSelected)
 }

@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -93,7 +94,8 @@ fun AuthScreen(
         modifier = modifier
             .fillMaxSize()
             .background(screenBgColor)
-            .statusBarsPadding(),
+            .statusBarsPadding()
+            .imePadding(),
         contentAlignment = Alignment.Center
     ) {
         val viewportWidth = maxWidth
@@ -128,7 +130,7 @@ fun AuthScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
+                verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 CanvasBrandingPane(
@@ -310,26 +312,26 @@ fun AuthFormPane(
         modifier = modifier
             .fillMaxWidth()
             .then(if (isWideScreen) Modifier.fillMaxHeight() else Modifier)
-            .animateContentSize(),
+            .animateContentSize(alignment = Alignment.BottomCenter),
         shape = formShape,
         color = colors.surface,
         border = BorderStroke(2.5.dp, strokeColor)
     ) {
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = if (isWideScreen) Modifier.fillMaxSize() else Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth(columnWidthFraction)
-                    .fillMaxHeight()
+                    .then(if (isWideScreen) Modifier.fillMaxHeight() else Modifier)
                     .verticalScroll(rememberScrollState())
                     .padding(
                         horizontal = if (isWideScreen) 32.dp else 28.dp,
                         vertical = if (isWideScreen) 36.dp else 28.dp
                     ),
                 horizontalAlignment = Alignment.Start,
-                verticalArrangement = if (isWideScreen) Arrangement.Center else Arrangement.SpaceBetween
+                verticalArrangement = if (isWideScreen) Arrangement.Center else Arrangement.Top
             ) {
                 // Error Banner
                 AnimatedVisibility(visible = state.errorMessage != null) {

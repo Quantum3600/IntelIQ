@@ -32,15 +32,15 @@ class AuthViewModel(
     init {
         viewModelScope.launch {
             getAuthStateUseCase().collect { authState ->
-                when (authState) {
-                    is AuthState.Authenticated -> {
+                when {
+                    authState is AuthState.Authenticated -> {
                         _uiState.update { it.copy(authenticatedUser = authState.user, isLoading = false) }
                         _eventFlow.emit(AuthSingleEvent.NavigateToHome(authState.user))
                     }
-                    is AuthState.Unauthenticated -> {
+                    authState is AuthState.Unauthenticated -> {
                         _uiState.update { it.copy(authenticatedUser = null, isLoading = false) }
                     }
-                    is AuthState.Loading -> {
+                    authState is AuthState.Loading -> {
                         _uiState.update { it.copy(isLoading = true) }
                     }
                 }
@@ -49,20 +49,20 @@ class AuthViewModel(
     }
 
     fun onIntent(intent: AuthIntent) {
-        when (intent) {
-            is AuthIntent.EmailChanged -> {
+        when {
+            intent is AuthIntent.EmailChanged -> {
                 _uiState.update { it.copy(email = intent.email, errorMessage = null) }
             }
-            is AuthIntent.PasswordChanged -> {
+            intent is AuthIntent.PasswordChanged -> {
                 _uiState.update { it.copy(password = intent.password, errorMessage = null) }
             }
-            is AuthIntent.NameChanged -> {
+            intent is AuthIntent.NameChanged -> {
                 _uiState.update { it.copy(name = intent.name, errorMessage = null) }
             }
-            is AuthIntent.RoleChanged -> {
+            intent is AuthIntent.RoleChanged -> {
                 _uiState.update { it.copy(role = intent.role, errorMessage = null) }
             }
-            is AuthIntent.ToggleAuthMode -> {
+            intent is AuthIntent.ToggleAuthMode -> {
                 _uiState.update {
                     it.copy(
                         isRegistering = !it.isRegistering,
@@ -70,10 +70,10 @@ class AuthViewModel(
                     )
                 }
             }
-            is AuthIntent.SubmitAuth -> {
+            intent is AuthIntent.SubmitAuth -> {
                 submitAuth()
             }
-            is AuthIntent.DebugSkipAuth -> {
+            intent is AuthIntent.DebugSkipAuth -> {
                 val debugUser = User(
                     id = "debug-001",
                     email = "student@inteliq.edu",
@@ -85,7 +85,7 @@ class AuthViewModel(
                     _eventFlow.emit(AuthSingleEvent.NavigateToHome(debugUser))
                 }
             }
-            is AuthIntent.ClearError -> {
+            intent is AuthIntent.ClearError -> {
                 _uiState.update { it.copy(errorMessage = null) }
             }
         }

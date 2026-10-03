@@ -198,7 +198,8 @@ fun CanvasBrandingPane(
     val shapeBlue = if (isDark) Color(0xFF2563EB) else Color(0xFF3897F0)
     val shapeRed = if (isDark) Color(0xFFDC2626) else Color(0xFFFF2A2A)
     val strokeColor = if (isDark) colors.outline else Color(0xFF171B2E)
-    val dotColor = if (isDark) colors.onBackground.copy(alpha = 0.12f) else Color.Black.copy(alpha = 0.15f)
+    val dotColor =
+        if (isDark) colors.onBackground.copy(alpha = 0.12f) else Color.Black.copy(alpha = 0.15f)
 
     Box(
         modifier = modifier
@@ -330,281 +331,281 @@ fun AuthFormPane(
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = if (isWideScreen) Arrangement.Center else Arrangement.SpaceBetween
             ) {
-            // Error Banner
-            AnimatedVisibility(visible = state.errorMessage != null) {
-                state.errorMessage?.let { msg ->
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 12.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        color = colors.errorContainer,
-                        border = BorderStroke(2.dp, colors.error)
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(10.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                // Error Banner
+                AnimatedVisibility(visible = state.errorMessage != null) {
+                    state.errorMessage?.let { msg ->
+                        Surface(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 12.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            color = colors.errorContainer,
+                            border = BorderStroke(2.dp, colors.error)
                         ) {
-                            Text(
-                                text = msg,
-                                color = colors.onErrorContainer,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Medium,
-                                modifier = Modifier.weight(1f)
-                            )
-                            IconButton(
-                                onClick = { onIntent(AuthIntent.ClearError) },
-                                modifier = Modifier.size(20.dp)
+                            Row(
+                                modifier = Modifier.padding(10.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Close,
-                                    contentDescription = "Clear Error",
-                                    tint = colors.onErrorContainer,
-                                    modifier = Modifier.size(14.dp)
+                                Text(
+                                    text = msg,
+                                    color = colors.onErrorContainer,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    modifier = Modifier.weight(1f)
                                 )
+                                IconButton(
+                                    onClick = { onIntent(AuthIntent.ClearError) },
+                                    modifier = Modifier.size(20.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Close,
+                                        contentDescription = "Clear Error",
+                                        tint = colors.onErrorContainer,
+                                        modifier = Modifier.size(14.dp)
+                                    )
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            // Title Row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = if (state.isRegistering) "Create Account" else "Log in",
-                    style = MaterialTheme.typography.headlineMedium,
-                    textAlign = TextAlign.Center,
-                    color = colors.onSurface
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Full Name field (Registering mode)
-            AnimatedVisibility(visible = state.isRegistering) {
-                Column {
-                    NeobrutalistTextField(
-                        value = state.name,
-                        onValueChange = { onIntent(AuthIntent.NameChanged(it)) },
-                        label = "FULL NAME",
-                        placeholder = "Enter your full name",
-                        singleLine = true,
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Person,
-                                contentDescription = null,
-                                tint = colors.onSurface
-                            )
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(32.dp),
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-            }
-
-            // Email field
-            NeobrutalistTextField(
-                value = state.email,
-                onValueChange = { onIntent(AuthIntent.EmailChanged(it)) },
-                label = "EMAIL",
-                placeholder = "student@inteliq.edu",
-                singleLine = true,
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Email,
-                        contentDescription = null,
-                        tint = colors.onSurface
-                    )
-                },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(32.dp),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Next
-                )
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Password field
-            NeobrutalistTextField(
-                value = state.password,
-                onValueChange = { onIntent(AuthIntent.PasswordChanged(it)) },
-                label = "PASSWORD",
-                placeholder = "••••••••",
-                isPassword = true,
-                singleLine = true,
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Lock,
-                        contentDescription = null,
-                        tint = colors.onSurface
-                    )
-                },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(32.dp),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done
-                )
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Remember Me & Forgot Password Row
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(8.dp))
-                    .padding(vertical = 2.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
+                // Title Row
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable { rememberMe = !rememberMe }
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(20.dp)
-                            .clip(RoundedCornerShape(6.dp))
-                            .background(if (rememberMe) checkActiveBg else colors.surface)
-                            .border(2.dp, strokeColor, RoundedCornerShape(6.dp)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        if (rememberMe) {
-                            Icon(
-                                imageVector = Icons.Default.Check,
-                                contentDescription = null,
-                                tint = if (isDark) colors.onPrimary else strokeColor,
-                                modifier = Modifier.size(14.dp)
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "REMEMBER ME",
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold,
+                        text = if (state.isRegistering) "Create Account" else "Log in",
+                        style = MaterialTheme.typography.headlineMedium,
+                        textAlign = TextAlign.Center,
                         color = colors.onSurface
                     )
                 }
-                Text(
-                    text = "FORGOT PASSWORD?",
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = colors.primary,
-                    modifier = Modifier.clickable { /* Forgotten password handler */ }
-                )
-            }
 
-            Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-            // Primary Submit Button
-            NeobrutalistButton(
-                onClick = { onIntent(AuthIntent.SubmitAuth) },
-                enabled = !state.isLoading && state.email.isNotBlank() && state.password.isNotBlank(),
-                variant = NeobrutalistButtonVariant.Primary,
-                shape = RoundedCornerShape(32.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-            ) {
-                if (state.isLoading) {
-                    CircularProgressIndicator(
-                        color = LocalContentColor.current,
-                        strokeWidth = 2.dp,
-                        modifier = Modifier.size(18.dp)
+                // Full Name field (Registering mode)
+                AnimatedVisibility(visible = state.isRegistering) {
+                    Column {
+                        NeobrutalistTextField(
+                            value = state.name,
+                            onValueChange = { onIntent(AuthIntent.NameChanged(it)) },
+                            label = "FULL NAME",
+                            placeholder = "Enter your full name",
+                            singleLine = true,
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Person,
+                                    contentDescription = null,
+                                    tint = colors.onSurface
+                                )
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(32.dp),
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                }
+
+                // Email field
+                NeobrutalistTextField(
+                    value = state.email,
+                    onValueChange = { onIntent(AuthIntent.EmailChanged(it)) },
+                    label = "EMAIL",
+                    placeholder = "student@inteliq.edu",
+                    singleLine = true,
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Email,
+                            contentDescription = null,
+                            tint = colors.onSurface
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(32.dp),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Next
                     )
-                } else {
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Password field
+                NeobrutalistTextField(
+                    value = state.password,
+                    onValueChange = { onIntent(AuthIntent.PasswordChanged(it)) },
+                    label = "PASSWORD",
+                    placeholder = "••••••••",
+                    isPassword = true,
+                    singleLine = true,
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Lock,
+                            contentDescription = null,
+                            tint = colors.onSurface
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(32.dp),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Done
+                    )
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Remember Me & Forgot Password Row
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(8.dp))
+                        .padding(vertical = 2.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
                     Row(
-                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable { rememberMe = !rememberMe }
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(20.dp)
+                                .clip(RoundedCornerShape(6.dp))
+                                .background(if (rememberMe) checkActiveBg else colors.surface)
+                                .border(2.dp, strokeColor, RoundedCornerShape(6.dp)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (rememberMe) {
+                                Icon(
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = null,
+                                    tint = if (isDark) colors.onPrimary else strokeColor,
+                                    modifier = Modifier.size(14.dp)
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "REMEMBER ME",
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = colors.onSurface
+                        )
+                    }
+                    Text(
+                        text = "FORGOT PASSWORD?",
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = colors.primary,
+                        modifier = Modifier.clickable { /* Forgotten password handler */ }
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // Primary Submit Button
+                NeobrutalistButton(
+                    onClick = { onIntent(AuthIntent.SubmitAuth) },
+                    enabled = !state.isLoading && state.email.isNotBlank() && state.password.isNotBlank(),
+                    variant = NeobrutalistButtonVariant.Primary,
+                    shape = RoundedCornerShape(32.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                ) {
+                    if (state.isLoading) {
+                        CircularProgressIndicator(
+                            color = LocalContentColor.current,
+                            strokeWidth = 2.dp,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    } else {
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = if (state.isRegistering) "CREATE ACCOUNT" else "SIGN IN",
+                                style = MaterialTheme.typography.labelLarge,
+                                fontWeight = FontWeight.Bold,
+                                color = LocalContentColor.current
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                contentDescription = null,
+                                tint = LocalContentColor.current,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Toggle Login / Register
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = if (state.isRegistering) "Already have an account?" else "Don't have an account?",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = colors.onSurface.copy(alpha = 0.7f)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Row(
+                        modifier = Modifier.clickable { onIntent(AuthIntent.ToggleAuthMode) },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = if (state.isRegistering) "CREATE ACCOUNT" else "SIGN IN",
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = LocalContentColor.current
+                            text = if (state.isRegistering) "Sign in" else "Create an account",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = colors.primary
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                             contentDescription = null,
-                            tint = LocalContentColor.current,
+                            tint = colors.primary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Debug Skip Auth Button
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    IconButton(
+                        modifier = Modifier.size(16.dp),
+                        enabled = true,
+                        onClick = { onIntent(AuthIntent.DebugSkipAuth) },
+                        colors = IconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.error,
+                            contentColor = MaterialTheme.colorScheme.onError,
+                            disabledContainerColor = Color.Transparent,
+                            disabledContentColor = Color.Black,
+                        )
+                    ) {
+                        Icon(
+                            Icons.Default.BugReport,
+                            contentDescription = "Debug mode",
                             modifier = Modifier.size(18.dp)
                         )
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Toggle Login / Register
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = if (state.isRegistering) "Already have an account?" else "Don't have an account?",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = colors.onSurface.copy(alpha = 0.7f)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Row(
-                    modifier = Modifier.clickable { onIntent(AuthIntent.ToggleAuthMode) },
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = if (state.isRegistering) "Sign in" else "Create an account",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = colors.primary
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = null,
-                        tint = colors.primary,
-                        modifier = Modifier.size(16.dp)
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Debug Skip Auth Button
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                IconButton(
-                    modifier = Modifier.size(16.dp),
-                    enabled = true,
-                    onClick = { onIntent(AuthIntent.DebugSkipAuth) },
-                    colors = IconButtonColors(
-                        containerColor = MaterialTheme.colorScheme.error,
-                        contentColor = MaterialTheme.colorScheme.onError,
-                        disabledContainerColor = Color.Transparent,
-                        disabledContentColor = Color.Black,
-                    )
-                ) {
-                    Icon(
-                        Icons.Default.BugReport,
-                        contentDescription = "Debug mode",
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
-            }
         }
     }
-}
 }
 
 @Preview

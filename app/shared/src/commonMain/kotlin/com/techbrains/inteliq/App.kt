@@ -95,8 +95,8 @@ fun App() {
             transitionSpec = { fadeIn() togetherWith fadeOut() },
             label = "ScreenTransition"
         ) { destination ->
-            when (destination) {
-                is ScreenDestination.Splash -> {
+            when {
+                destination is ScreenDestination.Splash -> {
                     SplashScreen(
                         onSplashFinished = {
                             navigator.navigateTo(ScreenDestination.Auth)
@@ -104,7 +104,7 @@ fun App() {
                     )
                 }
 
-                is ScreenDestination.Auth -> {
+                destination is ScreenDestination.Auth -> {
                     AuthScreen(
                         state = authState,
                         onIntent = { intent ->
@@ -121,7 +121,7 @@ fun App() {
                     )
                 }
 
-                is ScreenDestination.Main -> {
+                destination is ScreenDestination.Main -> {
                     MainAppShell(
                         currentTab = navigator.currentMainTab,
                         userName = authState.authenticatedUser?.name ?: "Student",
@@ -198,12 +198,12 @@ private fun MainTabContent(
     onUpdateThemeState: (ThemeState) -> Unit,
     onLogout: () -> Unit
 ) {
-    when (currentTab) {
-        is ScreenDestination.Main.Home -> DashboardScreen()
-        is ScreenDestination.Main.Path -> CoursesScreen()
-        is ScreenDestination.Main.Practice -> QuizScreen()
-        is ScreenDestination.Main.Progress -> ProgressScreen()
-        is ScreenDestination.Main.Profile -> ProfileScreen(
+    when {
+        currentTab is ScreenDestination.Main.Home -> DashboardScreen()
+        currentTab is ScreenDestination.Main.Path -> CoursesScreen()
+        currentTab is ScreenDestination.Main.Practice -> QuizScreen()
+        currentTab is ScreenDestination.Main.Progress -> ProgressScreen()
+        currentTab is ScreenDestination.Main.Profile -> ProfileScreen(
             themeState = themeState,
             onUpdateThemeState = onUpdateThemeState,
             onLogout = onLogout

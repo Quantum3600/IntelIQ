@@ -40,6 +40,11 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+
 @Composable
 fun App() {
     var themeState by remember { mutableStateOf(ThemeState()) }
@@ -90,13 +95,19 @@ fun App() {
 
         val authState by authViewModel.uiState.collectAsState()
 
+        val topLevelTarget = remember(navigator.currentDestination) {
+            if (navigator.currentDestination is ScreenDestination.Main) "MAIN_SHELL"
+            else navigator.currentDestination
+        }
+
         AnimatedContent(
-            targetState = navigator.currentDestination,
-            transitionSpec = { fadeIn() togetherWith fadeOut() },
+            targetState = topLevelTarget,
+            transitionSpec = { fadeIn(animationSpec = tween(250)) togetherWith fadeOut(animationSpec = tween(250)) },
             label = "ScreenTransition"
-        ) { destination ->
-            when {
-                destination is ScreenDestination.Splash -> {
+        ) { _ ->
+            val destination = navigator.currentDestination
+            when (destination) {
+                is ScreenDestination.Splash -> {
                     SplashScreen(
                         onSplashFinished = {
                             navigator.navigateTo(ScreenDestination.Auth)
@@ -104,7 +115,7 @@ fun App() {
                     )
                 }
 
-                destination is ScreenDestination.Auth -> {
+                is ScreenDestination.Auth -> {
                     AuthScreen(
                         state = authState,
                         onIntent = { intent ->
@@ -121,7 +132,7 @@ fun App() {
                     )
                 }
 
-                destination is ScreenDestination.Main -> {
+                else -> {
                     MainAppShell(
                         currentTab = navigator.currentMainTab,
                         userName = authState.authenticatedUser?.name ?: "Student",
@@ -135,18 +146,6 @@ fun App() {
                             authViewModel.onIntent(AuthIntent.ClearError)
                             navigator.navigateTo(ScreenDestination.Auth)
                         }
-                    )
-                }
-
-                else -> {
-                    MainAppShell(
-                        currentTab = ScreenDestination.Main.Home,
-                        userName = authState.authenticatedUser?.name ?: "Student",
-                        userEmail = authState.authenticatedUser?.email ?: "student@inteliq.edu",
-                        themeState = themeState,
-                        onUpdateThemeState = { themeState = it },
-                        onTabSelected = { tab -> navigator.navigateTo(tab) },
-                        onLogout = { navigator.navigateTo(ScreenDestination.Auth) }
                     )
                 }
             }
@@ -191,6 +190,14 @@ fun MainAppShell(
     }
 }
 
+private fun getTabOrder(tab: ScreenDestination.Main): Int = when (tab) {
+    is ScreenDestination.Main.Home -> 0
+    is ScreenDestination.Main.Learn -> 1
+    is ScreenDestination.Main.Discover -> 2
+    is ScreenDestination.Main.Practice -> 3
+    is ScreenDestination.Main.Profile -> 4
+}
+
 @Composable
 private fun MainTabContent(
     currentTab: ScreenDestination.Main,
@@ -198,15 +205,37 @@ private fun MainTabContent(
     onUpdateThemeState: (ThemeState) -> Unit,
     onLogout: () -> Unit
 ) {
-    when {
-        currentTab is ScreenDestination.Main.Home -> DashboardScreen()
-        currentTab is ScreenDestination.Main.Path -> CoursesScreen()
-        currentTab is ScreenDestination.Main.Practice -> QuizScreen()
-        currentTab is ScreenDestination.Main.Progress -> ProgressScreen()
-        currentTab is ScreenDestination.Main.Profile -> ProfileScreen(
-            themeState = themeState,
-            onUpdateThemeState = onUpdateThemeState,
-            onLogout = onLogout
-        )
+    AnimatedContent(
+        targetState = currentTab,
+        transitionSpec = {
+            val isForward = getTabOrder(targetState) > getTabOrder(initialState)
+            val directionMultiplier = if (isForward) 1 else -1
+
+            val enterSlide = slideInHorizontally(
+                animationSpec = tween(220, easing = FastOutSlowInEasing)
+            ) { fullWidth -> directionMultiplier * (fullWidth / 6) }
+
+            val exitSlide = slideOutHorizontally(
+                animationSpec = tween(180, easing = FastOutSlowInEasing)
+            ) { fullWidth -> -directionMultiplier * (fullWidth / 6) }
+
+            (fadeIn(animationSpec = tween(220, easing = FastOutSlowInEasing)) + enterSlide)
+                .togetherWith(
+                    fadeOut(animationSpec = tween(180, easing = FastOutSlowInEasing)) + exitSlide
+                )
+        },
+        label = "MainTabTransition"
+    ) { tab ->
+        when (tab) {
+            ScreenDestination.Main.Home -> DashboardScreen()
+            ScreenDestination.Main.Learn -> CoursesScreen()
+            ScreenDestination.Main.Discover -> ProgressScreen()
+            ScreenDestination.Main.Practice -> QuizScreen()
+            ScreenDestination.Main.Profile -> ProfileScreen(
+                themeState = themeState,
+                onUpdateThemeState = onUpdateThemeState,
+                onLogout = onLogout
+            )
+        }
     }
 }

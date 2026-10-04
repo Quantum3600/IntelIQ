@@ -1,7 +1,10 @@
 package com.techbrains.inteliq
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -10,6 +13,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
@@ -22,6 +26,10 @@ private val Blue = Color(0xFF4EB5FF)
 // High-resolution SVG canvas coordinate space: 3488 x 776 (4x base resolution)
 private const val LOGO_W = 3488f
 private const val LOGO_H = 776f
+
+// High-resolution IQ logo canvas coordinate space: 1100 x 776
+private const val IQ_W = 1100f
+private const val IQ_H = 776f
 
 // Unified "n" shape: arch + legs combined into a single contiguous path to eliminate anti-aliasing seams/white lines
 private val nPath = Path().apply {
@@ -104,41 +112,133 @@ private val qPath = Path().apply {
 }
 
 @Composable
-fun InteliqLogo(modifier: Modifier = Modifier) {
+fun InteliqLogo(
+    modifier: Modifier = Modifier,
+    isDarkTheme: Boolean = false,
+    textColor: Color = if (isDarkTheme) Color.White else Dark
+) {
     Canvas(modifier = modifier.aspectRatio(LOGO_W / LOGO_H)) {
         val s = size.width / LOGO_W
         // Draw in high-resolution vector coordinates (3488 x 776)
         scale(scaleX = s, scaleY = s, pivot = Offset.Zero) {
             // "i" (left): stem + yellow dot
-            drawRect(Dark, topLeft = Offset(16f, 312f), size = Size(256f, 464f))
+            drawRect(textColor, topLeft = Offset(16f, 312f), size = Size(256f, 464f))
             drawCircle(Yellow, radius = 146f, center = Offset(146f, 146f))
 
             // "n": unified arch + legs (no interior seam/white line)
-            drawPath(nPath, Dark)
+            drawPath(nPath, textColor)
 
             // "L" + green dot
-            drawPath(lPath, Dark)
+            drawPath(lPath, textColor)
             drawCircle(Green, radius = 146f, center = Offset(1342f, 310f))
 
             // "e"
-            drawPath(ePath, Dark)
+            drawPath(ePath, textColor)
 
             // "l" stem
-            drawRect(Dark, topLeft = Offset(2144f, 40f), size = Size(256f, 736f))
+            drawRect(textColor, topLeft = Offset(2144f, 40f), size = Size(256f, 736f))
 
             // "i" (right): stem + red dot
-            drawRect(Dark, topLeft = Offset(2448f, 312f), size = Size(256f, 464f))
+            drawRect(textColor, topLeft = Offset(2448f, 312f), size = Size(256f, 464f))
             drawCircle(Red, radius = 146f, center = Offset(2574f, 146f))
 
             // "Q" + blue dot
-            drawPath(qPath, Dark)
+            drawPath(qPath, textColor)
             drawCircle(Blue, radius = 146f, center = Offset(3342f, 630f))
         }
     }
 }
 
-@Preview(showBackground = true)
+/** Dark mode version of full IntelIQ logo (White text on dark background) */
 @Composable
-private fun InteliqLogoPreview() {
-    InteliqLogo(Modifier.width(1024.dp).aspectRatio(LOGO_W / LOGO_H))
+fun InteliqLogoDark(
+    modifier: Modifier = Modifier
+) {
+    InteliqLogo(
+        modifier = modifier,
+        isDarkTheme = true
+    )
+}
+
+@Composable
+fun IqLogo(
+    modifier: Modifier = Modifier,
+    isDarkTheme: Boolean = false,
+    textColor: Color = if (isDarkTheme) Color.White else Dark,
+    iDotColor: Color = Red,
+    qDotColor: Color = Blue
+) {
+    Canvas(modifier = modifier.aspectRatio(IQ_W / IQ_H)) {
+        val s = minOf(size.width / IQ_W, size.height / IQ_H)
+        val drawWidth = IQ_W * s
+        val drawHeight = IQ_H * s
+        val offsetX = (size.width - drawWidth) / 2f
+        val offsetY = (size.height - drawHeight) / 2f
+
+        withTransform({
+            translate(left = offsetX, top = offsetY)
+            scale(scaleX = s, scaleY = s, pivot = Offset.Zero)
+        }) {
+            // "i" (left): stem + yellow dot
+            drawRect(textColor, topLeft = Offset(16f, 312f), size = Size(256f, 464f))
+            drawCircle(iDotColor, radius = 146f, center = Offset(146f, 146f))
+
+            // "Q" + blue dot shifted left to sit next to "i"
+            withTransform({
+                translate(left = 356f - 2744f)
+            }) {
+                drawPath(qPath, textColor)
+                drawCircle(qDotColor, radius = 146f, center = Offset(3342f, 630f))
+            }
+        }
+    }
+}
+
+/** Dark mode version of standalone IQ logo (White text on dark background) */
+@Composable
+fun IqLogoDark(
+    modifier: Modifier = Modifier,
+    iDotColor: Color = Red,
+    qDotColor: Color = Blue
+) {
+    IqLogo(
+        modifier = modifier,
+        isDarkTheme = true,
+        iDotColor = iDotColor,
+        qDotColor = qDotColor
+    )
+}
+
+// --- Previews: Light and Dark Mode Versions ---
+
+@Preview(name = "IQ Logo - Light Mode", showBackground = true)
+@Composable
+private fun IqLogoLightPreview() {
+    Box(modifier = Modifier.background(Color.White).padding(16.dp)) {
+        IqLogo(modifier = Modifier.width(200.dp))
+    }
+}
+
+@Preview(name = "IQ Logo - Dark Mode (White/Black Swapped)", showBackground = true)
+@Composable
+private fun IqLogoDarkPreview() {
+    Box(modifier = Modifier.background(Color(0xFF121212)).padding(16.dp)) {
+        IqLogoDark(modifier = Modifier.width(200.dp))
+    }
+}
+
+@Preview(name = "IntelIQ Logo - Light Mode", showBackground = true)
+@Composable
+private fun InteliqLogoLightPreview() {
+    Box(modifier = Modifier.background(Color.White).padding(16.dp)) {
+        InteliqLogo(modifier = Modifier.width(600.dp))
+    }
+}
+
+@Preview(name = "IntelIQ Logo - Dark Mode (White/Black Swapped)", showBackground = true)
+@Composable
+private fun InteliqLogoDarkPreview() {
+    Box(modifier = Modifier.background(Color(0xFF121212)).padding(16.dp)) {
+        InteliqLogoDark(modifier = Modifier.width(600.dp))
+    }
 }

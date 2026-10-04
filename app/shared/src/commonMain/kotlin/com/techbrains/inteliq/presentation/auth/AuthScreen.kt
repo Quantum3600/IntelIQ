@@ -40,7 +40,7 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.CircularProgressIndicator
+import com.techbrains.inteliq.presentation.components.LottieLoader
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
@@ -530,10 +530,9 @@ fun AuthFormPane(
                         .height(56.dp)
                 ) {
                     if (state.isLoading) {
-                        CircularProgressIndicator(
-                            color = LocalContentColor.current,
-                            strokeWidth = 2.dp,
-                            modifier = Modifier.size(18.dp)
+                        LottieLoader(
+                            size = 32.dp,
+                            isDark = isDark
                         )
                     } else {
                         Row(

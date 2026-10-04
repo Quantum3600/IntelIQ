@@ -32,7 +32,7 @@ fun ProgressScreen(
             horizontalAlignment = Alignment.Start
         ) {
             Text(
-                text = "Mastery & Analytics",
+                text = "Discover & Insights",
                 fontSize = 26.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground

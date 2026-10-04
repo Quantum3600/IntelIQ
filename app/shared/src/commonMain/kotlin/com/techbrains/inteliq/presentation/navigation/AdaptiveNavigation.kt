@@ -1,40 +1,29 @@
 package com.techbrains.inteliq.presentation.navigation
 
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.spring
+import com.techbrains.inteliq.IqLogo
+
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.style.ExperimentalFoundationStyleApi
-import androidx.compose.foundation.style.rememberUpdatedStyleState
-import androidx.compose.foundation.style.styleable
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.AutoStories
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LightMode
-import androidx.compose.material.icons.filled.Logout
-import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,8 +32,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,7 +40,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.techbrains.inteliq.presentation.theme.ComponentStyles
+import com.techbrains.inteliq.presentation.theme.DarkThemeMode
 import com.techbrains.inteliq.presentation.theme.Flame
 
 /**
@@ -73,13 +60,12 @@ data class NavigationNavItem(
 
 val mainNavItems = listOf(
     NavigationNavItem("Home", Icons.Default.Home, ScreenDestination.Main.Home),
-    NavigationNavItem("Path", Icons.Default.Map, ScreenDestination.Main.Path),
+    NavigationNavItem("Learn", Icons.Default.AutoStories, ScreenDestination.Main.Learn),
+    NavigationNavItem("Discover", Icons.Default.Explore, ScreenDestination.Main.Discover),
     NavigationNavItem("Practice", Icons.Default.FitnessCenter, ScreenDestination.Main.Practice),
-    NavigationNavItem("Progress", Icons.Default.BarChart, ScreenDestination.Main.Progress),
     NavigationNavItem("Profile", Icons.Default.Person, ScreenDestination.Main.Profile)
 )
 
-@OptIn(ExperimentalFoundationStyleApi::class)
 @Composable
 fun AdaptiveNavigationLayout(
     currentTab: ScreenDestination.Main,
@@ -124,19 +110,24 @@ fun AdaptiveNavigationLayout(
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
                                 .navigationBarsPadding()
-                                .padding(start = 16.dp, end = 20.dp, top = 8.dp, bottom = 12.dp)
+                                .padding(start = 12.dp, end = 16.dp)
                         )
                     }
                 }
             }
 
             AdaptiveWindowSizeClass.MEDIUM -> {
-                // Tablet Layout: Side Navigation Rail + Main Header & Content
-                Row(modifier = Modifier.fillMaxSize()) {
+                // Tablet Layout: Floating Side Navigation Rail + Main Header & Content
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                ) {
                     AdaptiveNavigationRail(
                         currentTab = currentTab,
                         onTabSelected = onTabSelected,
-                        onLogout = onLogout
+                        onLogout = onLogout,
+                        isDarkThemeMode = if (isDarkTheme) DarkThemeMode.DARK else DarkThemeMode.LIGHT
                     )
 
                     Scaffold(
@@ -159,14 +150,19 @@ fun AdaptiveNavigationLayout(
             }
 
             AdaptiveWindowSizeClass.EXPANDED -> {
-                // Desktop Layout: Expanded Navigation Drawer + Main Header & Content
-                Row(modifier = Modifier.fillMaxSize()) {
+                // Desktop Layout: Floating Navigation Drawer + Main Header & Content
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                ) {
                     AdaptiveNavigationDrawer(
                         currentTab = currentTab,
                         onTabSelected = onTabSelected,
                         onLogout = onLogout,
                         userName = userName,
-                        userEmail = userEmail
+                        userEmail = userEmail,
+                        isDarkThemeMode = if(isDarkTheme) DarkThemeMode.DARK else DarkThemeMode.LIGHT
                     )
 
                     Scaffold(
@@ -214,20 +210,10 @@ fun TopHeaderAppLogoAndStats(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Surface(
-                    shape = RoundedCornerShape(8.dp),
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(32.dp)
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Text(
-                            text = "IQ",
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            fontWeight = FontWeight.Black,
-                            fontSize = 14.sp
-                        )
-                    }
-                }
+                IqLogo(
+                    modifier = Modifier.size(32.dp),
+                    isDarkTheme = isDarkTheme
+                )
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
                     text = "IntelIQ",
@@ -297,361 +283,6 @@ fun TopHeaderAppLogoAndStats(
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(20.dp)
                     )
-                }
-            }
-        }
-    }
-}
-
-/**
- * Floating Navigation Bar for Mobile with smooth animated inner indicator & shadow clearance
- */
-@OptIn(ExperimentalFoundationStyleApi::class)
-@Composable
-fun FloatingNavigationBar(
-    currentTab: ScreenDestination.Main,
-    onTabSelected: (ScreenDestination.Main) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val selectedIndex = mainNavItems.indexOfFirst { it.destination == currentTab }.coerceAtLeast(0)
-
-    BoxWithConstraints(
-        modifier = modifier
-            .fillMaxWidth()
-            .styleable(
-                style = ComponentStyles.floatingNavBarStyle
-            )
-    ) {
-        val totalWidth = maxWidth - 24.dp // accounting for content padding
-        val itemWidth = totalWidth / mainNavItems.size
-
-        // Smooth sliding animation for inner indicator pill
-        val indicatorOffset by animateDpAsState(
-            targetValue = itemWidth * selectedIndex,
-            animationSpec = spring(
-                dampingRatio = Spring.DampingRatioMediumBouncy,
-                stiffness = Spring.StiffnessLow
-            ),
-            label = "NavIndicatorOffset"
-        )
-
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.CenterStart
-        ) {
-            // Animated Selection Indicator Pill
-            Box(
-                modifier = Modifier
-                    .offset(x = indicatorOffset)
-                    .width(itemWidth)
-                    .height(44.dp)
-                    .styleable(
-                        style = ComponentStyles.navIndicatorStyle
-                    )
-            )
-
-            // Navigation Items Row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                mainNavItems.forEachIndexed { index, item ->
-                    val isSelected = index == selectedIndex
-                    val interactionSource = remember { MutableInteractionSource() }
-                    val styleState = rememberUpdatedStyleState(interactionSource)
-
-                    Column(
-                        modifier = Modifier
-                            .width(itemWidth)
-                            .height(48.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .clickable(
-                                interactionSource = interactionSource,
-                                indication = null,
-                                onClick = { onTabSelected(item.destination) }
-                            )
-                            .styleable(
-                                styleState = styleState,
-                                style = ComponentStyles.navItemStyle
-                            ),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            imageVector = item.icon,
-                            contentDescription = item.title,
-                            tint = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text(
-                            text = item.title,
-                            fontSize = 10.sp,
-                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                            color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-/**
- * Adaptive Navigation Rail for Tablet
- */
-@OptIn(ExperimentalFoundationStyleApi::class)
-@Composable
-fun AdaptiveNavigationRail(
-    currentTab: ScreenDestination.Main,
-    onTabSelected: (ScreenDestination.Main) -> Unit,
-    onLogout: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxHeight()
-            .statusBarsPadding()
-            .navigationBarsPadding()
-            .width(84.dp)
-            .styleable(
-                style = ComponentStyles.navRailStyle
-            ),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
-        // Top: App Logo Placeholder
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Surface(
-                shape = RoundedCornerShape(12.dp),
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(44.dp)
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Text(
-                        text = "IQ",
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        fontWeight = FontWeight.Black,
-                        fontSize = 18.sp
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Navigation Items
-            mainNavItems.forEach { item ->
-                val isSelected = currentTab == item.destination
-                val interactionSource = remember { MutableInteractionSource() }
-                val styleState = rememberUpdatedStyleState(interactionSource)
-
-                Column(
-                    modifier = Modifier
-                        .padding(vertical = 6.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .clickable(
-                            interactionSource = interactionSource,
-                            indication = null,
-                            onClick = { onTabSelected(item.destination) }
-                        )
-                        .styleable(
-                            styleState = styleState,
-                            style = if (isSelected) ComponentStyles.selectedNavItemStyle else ComponentStyles.navItemStyle
-                        ),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        imageVector = item.icon,
-                        contentDescription = item.title,
-                        tint = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                        modifier = Modifier.size(22.dp)
-                    )
-                }
-            }
-        }
-
-        // Bottom: Profile Avatar Menu Button
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Box(
-                modifier = Modifier
-                    .size(44.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primaryContainer)
-                    .clickable { onTabSelected(ScreenDestination.Main.Profile) },
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = "Profile",
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-        }
-    }
-}
-
-/**
- * Adaptive Navigation Drawer for Desktop
- */
-@OptIn(ExperimentalFoundationStyleApi::class)
-@Composable
-fun AdaptiveNavigationDrawer(
-    currentTab: ScreenDestination.Main,
-    onTabSelected: (ScreenDestination.Main) -> Unit,
-    onLogout: () -> Unit,
-    userName: String,
-    userEmail: String,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxHeight()
-            .statusBarsPadding()
-            .navigationBarsPadding()
-            .width(264.dp)
-            .styleable(
-                style = ComponentStyles.navDrawerStyle
-            ),
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
-        // Top: Full App Branding
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(bottom = 24.dp)
-            ) {
-                Surface(
-                    shape = RoundedCornerShape(12.dp),
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(44.dp)
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Text(
-                            text = "IQ",
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            fontWeight = FontWeight.Black,
-                            fontSize = 20.sp
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.width(12.dp))
-                Column {
-                    Text(
-                        text = "IntelIQ",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Text(
-                        text = "Dynamic Knowledge Tracing",
-                        fontSize = 11.sp,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                    )
-                }
-            }
-
-            // Expanded Navigation Items
-            mainNavItems.forEach { item ->
-                val isSelected = currentTab == item.destination
-                val interactionSource = remember { MutableInteractionSource() }
-                val styleState = rememberUpdatedStyleState(interactionSource)
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .clickable(
-                            interactionSource = interactionSource,
-                            indication = null,
-                            onClick = { onTabSelected(item.destination) }
-                        )
-                        .styleable(
-                            styleState = styleState,
-                            style = if (isSelected) ComponentStyles.selectedNavItemStyle else ComponentStyles.navItemStyle
-                        ),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = item.icon,
-                        contentDescription = item.title,
-                        tint = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text(
-                        text = item.title,
-                        fontSize = 14.sp,
-                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                        color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
-                    )
-                }
-            }
-        }
-
-        // Bottom: Expanded Profile Card with Name & Sign Out Button
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .styleable(
-                        style = ComponentStyles.profileCardStyle
-                    )
-            ) {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(36.dp)
-                                    .clip(CircleShape)
-                                    .background(MaterialTheme.colorScheme.primaryContainer),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Person,
-                                    contentDescription = "User Avatar",
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Column {
-                                Text(
-                                    text = userName,
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                                Text(
-                                    text = userEmail,
-                                    fontSize = 11.sp,
-                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                                )
-                            }
-                        }
-
-                        IconButton(
-                            onClick = onLogout,
-                            modifier = Modifier.size(32.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Logout,
-                                contentDescription = "Sign Out",
-                                tint = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.size(18.dp)
-                            )
-                        }
-                    }
                 }
             }
         }

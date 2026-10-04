@@ -50,8 +50,22 @@ object ComponentStyles {
     val selectedNavItemStyle: Style
         @Composable get() = NavigationStyles.selectedNavItemStyle
 
+    @Composable
+    fun selectedNavItemStyle(shape: Shape): Style =
+        NavigationStyles.selectedNavItemStyle(shape)
+
+    val unselectedNavItemStyle: Style
+        @Composable get() = NavigationStyles.unselectedNavItemStyle
+
+    @Composable
+    fun unselectedNavItemStyle(shape: Shape): Style =
+        NavigationStyles.unselectedNavItemStyle(shape)
+
     val profileCardStyle: Style
         @Composable get() = NavigationStyles.profileCardStyle
+
+    val logoutButtonStyle: Style
+        @Composable get() = NavigationStyles.logoutButtonStyle
 
     val primaryButtonStyle: Style
         @Composable get() = ButtonStyles.primaryButtonStyle

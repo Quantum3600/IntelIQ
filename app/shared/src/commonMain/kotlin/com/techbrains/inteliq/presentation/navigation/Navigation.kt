@@ -12,10 +12,10 @@ sealed interface ScreenDestination {
 
     sealed interface Main : ScreenDestination {
         data object Home : Main          // dashboard
-        data object Path : Main          // courses / mastery map
+        data object Learn : Main         // courses / mastery map
+        data object Discover : Main      // recommendations / analytics / explore
         data object Practice : Main      // quiz / arena
-        data object Progress : Main      // progress / analytics
-        data object Profile : Main      // profile / settings
+        data object Profile : Main       // profile / settings
     }
 
     data class CourseDetail(val courseId: String) : ScreenDestination

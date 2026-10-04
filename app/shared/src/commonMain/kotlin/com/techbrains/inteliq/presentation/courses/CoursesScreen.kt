@@ -33,7 +33,7 @@ fun CoursesScreen(
             horizontalAlignment = Alignment.Start
         ) {
             Text(
-                text = "Skill Mastery Path",
+                text = "Learn & Skill Mastery",
                 fontSize = 26.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground

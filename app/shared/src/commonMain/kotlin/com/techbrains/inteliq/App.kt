@@ -44,6 +44,7 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.ui.Modifier
 
 @Composable
 fun App() {
@@ -183,6 +184,8 @@ fun MainAppShell(
     ) {
         MainTabContent(
             currentTab = currentTab,
+            userName = userName,
+            userEmail = userEmail,
             themeState = themeState,
             onUpdateThemeState = onUpdateThemeState,
             onLogout = onLogout
@@ -201,6 +204,8 @@ private fun getTabOrder(tab: ScreenDestination.Main): Int = when (tab) {
 @Composable
 private fun MainTabContent(
     currentTab: ScreenDestination.Main,
+    userName: String,
+    userEmail: String,
     themeState: ThemeState,
     onUpdateThemeState: (ThemeState) -> Unit,
     onLogout: () -> Unit
@@ -232,9 +237,12 @@ private fun MainTabContent(
             ScreenDestination.Main.Discover -> ProgressScreen()
             ScreenDestination.Main.Practice -> QuizScreen()
             ScreenDestination.Main.Profile -> ProfileScreen(
+                modifier = Modifier,
                 themeState = themeState,
                 onUpdateThemeState = onUpdateThemeState,
-                onLogout = onLogout
+                onLogout = onLogout,
+                userName = userName,
+                userEmail = userEmail
             )
         }
     }

@@ -78,6 +78,8 @@ fun AdaptiveNavigationLayout(
     onToggleDarkTheme: () -> Unit = {},
     content: @Composable () -> Unit
 ) {
+    val showTopHeader = currentTab != ScreenDestination.Main.Profile && currentTab != ScreenDestination.Main.Discover
+
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         val sizeClass = when {
             maxWidth < 600.dp -> AdaptiveWindowSizeClass.COMPACT
@@ -90,10 +92,12 @@ fun AdaptiveNavigationLayout(
                 // Mobile Layout: Top Header + Main Content + Floating Nav Bar at Bottom
                 Scaffold(
                     topBar = {
-                        TopHeaderAppLogoAndStats(
-                            isDarkTheme = isDarkTheme,
-                            onToggleDarkTheme = onToggleDarkTheme
-                        )
+                        if (showTopHeader) {
+                            TopHeaderAppLogoAndStats(
+                                isDarkTheme = isDarkTheme,
+                                onToggleDarkTheme = onToggleDarkTheme
+                            )
+                        }
                     }
                 ) { innerPadding ->
                     Box(
@@ -132,10 +136,12 @@ fun AdaptiveNavigationLayout(
 
                     Scaffold(
                         topBar = {
-                            TopHeaderAppLogoAndStats(
-                                isDarkTheme = isDarkTheme,
-                                onToggleDarkTheme = onToggleDarkTheme
-                            )
+                            if (showTopHeader) {
+                                TopHeaderAppLogoAndStats(
+                                    isDarkTheme = isDarkTheme,
+                                    onToggleDarkTheme = onToggleDarkTheme
+                                )
+                            }
                         }
                     ) { innerPadding ->
                         Box(
@@ -167,10 +173,12 @@ fun AdaptiveNavigationLayout(
 
                     Scaffold(
                         topBar = {
-                            TopHeaderAppLogoAndStats(
-                                isDarkTheme = isDarkTheme,
-                                onToggleDarkTheme = onToggleDarkTheme
-                            )
+                            if (showTopHeader) {
+                                TopHeaderAppLogoAndStats(
+                                    isDarkTheme = isDarkTheme,
+                                    onToggleDarkTheme = onToggleDarkTheme
+                                )
+                            }
                         }
                     ) { innerPadding ->
                         Box(

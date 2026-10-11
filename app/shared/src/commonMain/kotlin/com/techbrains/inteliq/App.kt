@@ -47,7 +47,9 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.ui.Modifier
 
 @Composable
-fun App() {
+fun App(
+    onThemeChanged: @Composable (isDark: Boolean) -> Unit = {}
+) {
     var themeState by remember { mutableStateOf(ThemeState()) }
 
     val isDark = when (themeState.darkThemeMode) {
@@ -55,6 +57,8 @@ fun App() {
         DarkThemeMode.LIGHT -> false
         DarkThemeMode.DARK -> true
     }
+
+    onThemeChanged(isDark)
 
     IntelIQTheme(
         seedColor = themeState.seedColor,

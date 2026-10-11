@@ -2,6 +2,7 @@ package com.techbrains.inteliq
 
 import androidx.compose.ui.window.application
 import dev.brahmkshatriya.betterwindow.BetterWindow
+import dev.brahmkshatriya.betterwindow.platform.overrideTitleBarAppearance
 
 fun main() = application {
     BetterWindow(
@@ -9,6 +10,10 @@ fun main() = application {
         title = "IntelIQ",
         allowDrawingInTitleBar = true,
     ) {
-        App()
+        App(
+            onThemeChanged = { isDark ->
+                overrideTitleBarAppearance(isDark)
+            },
+        )
     }
 }

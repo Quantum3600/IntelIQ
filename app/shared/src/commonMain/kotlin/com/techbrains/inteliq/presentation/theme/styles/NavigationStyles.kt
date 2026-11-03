@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalFoundationStyleApi::class)
 object NavigationStyles {
 
-    /** Neobrutalist Floating Navigation Bar Container Style */
+    /** Floating Navigation Bar Container Style */
     val floatingNavBarStyle: Style
         @Composable get() {
             val colors = MaterialTheme.colorScheme
@@ -34,7 +34,7 @@ object NavigationStyles {
             }
         }
 
-    /** Neobrutalist Floating Navigation Rail Style */
+    /** Floating Navigation Rail Style */
     val navRailStyle: Style
         @Composable get() {
             val colors = MaterialTheme.colorScheme
@@ -45,7 +45,7 @@ object NavigationStyles {
             }
         }
 
-    /** Neobrutalist Floating Navigation Drawer Style */
+    /** Floating Navigation Drawer Style */
     val navDrawerStyle: Style
         @Composable get() {
             val colors = MaterialTheme.colorScheme

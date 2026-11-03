@@ -8,7 +8,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.style.ExperimentalFoundationStyleApi
@@ -18,21 +17,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.techbrains.inteliq.presentation.theme.styles.SwitchStyles
 
 /**
- * Custom Neobrutalist Toggle Switch (`NeobrutalistSwitch.kt`).
+ * Custom Toggle Switch (`AppSwitch.kt`).
  */
 @OptIn(ExperimentalFoundationStyleApi::class)
 @Composable
-fun NeobrutalistSwitch(
+fun AppSwitch(
     checked: Boolean,
     onCheckedChange: ((Boolean) -> Unit)?,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    shadowClearance: Dp = 0.dp
+    enabled: Boolean = true
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
@@ -42,31 +39,27 @@ fun NeobrutalistSwitch(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessLow
         ),
-        label = "NeobrutalistSwitchThumbOffset"
+        label = "AppSwitchThumbOffset"
     )
 
     Box(
-        modifier = modifier.padding(end = shadowClearance, bottom = shadowClearance)
+        modifier = modifier
+            .width(52.dp)
+            .height(28.dp)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                enabled = enabled,
+                onClick = { onCheckedChange?.invoke(!checked) }
+            )
+            .styleable(style = SwitchStyles.switchTrackStyle(checked)),
+        contentAlignment = Alignment.CenterStart
     ) {
         Box(
             modifier = Modifier
-                .width(52.dp)
-                .height(28.dp)
-                .clickable(
-                    interactionSource = interactionSource,
-                    indication = null,
-                    enabled = enabled,
-                    onClick = { onCheckedChange?.invoke(!checked) }
-                )
-                .styleable(style = SwitchStyles.switchTrackStyle(checked)),
-            contentAlignment = Alignment.CenterStart
-        ) {
-            Box(
-                modifier = Modifier
-                    .offset(x = thumbOffset)
-                    .size(20.dp)
-                    .styleable(style = SwitchStyles.switchThumbStyle(checked))
-            )
-        }
+                .offset(x = thumbOffset)
+                .size(20.dp)
+                .styleable(style = SwitchStyles.switchThumbStyle(checked))
+        )
     }
 }

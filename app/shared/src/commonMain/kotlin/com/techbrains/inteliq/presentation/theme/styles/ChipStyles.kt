@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalFoundationStyleApi::class)
 object ChipStyles {
 
-    /** Neobrutalist Filter / Action Chip Style with customizable shape */
+    /** Filter / Action Chip Style with customizable shape */
     @Composable
     fun chipStyle(
         isSelected: Boolean = false,

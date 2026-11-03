@@ -17,12 +17,11 @@ enum class ButtonGroupPosition {
 @OptIn(ExperimentalFoundationStyleApi::class)
 object ButtonStyles {
 
-    /** Neobrutalist Primary Action Button Style with smooth animated parameters or custom shape */
+    /** Primary Action Button Style with smooth animated parameters or custom shape */
     @Composable
     fun primaryButtonStyle(
         cornerRadius: Dp = 24.dp,
-        shape: Shape? = null,
-        shadowOffsetDp: Dp = 4.dp
+        shape: Shape? = null
     ): Style {
         val colors = MaterialTheme.colorScheme
         val typography = MaterialTheme.typography
@@ -44,8 +43,7 @@ object ButtonStyles {
     @Composable
     fun debugButtonStyle(
         cornerRadius: Dp = 24.dp,
-        shape: Shape? = null,
-        shadowOffsetDp: Dp = 3.dp
+        shape: Shape? = null
     ): Style {
         val colors = MaterialTheme.colorScheme
         val typography = MaterialTheme.typography
@@ -63,7 +61,7 @@ object ButtonStyles {
     val debugButtonStyle: Style
         @Composable get() = debugButtonStyle()
 
-    /** Neobrutalist Button Group Segment Style with smooth animated parameters */
+    /** Button Group Segment Style with smooth animated parameters */
     @Composable
     fun buttonGroupStyle(
         position: ButtonGroupPosition,
@@ -75,8 +73,7 @@ object ButtonStyles {
         endCorner: Dp = when (position) {
             ButtonGroupPosition.End, ButtonGroupPosition.Single -> 100.dp
             else -> 0.dp
-        },
-        shadowOffsetDp: Dp = 3.dp
+        }
     ): Style {
         val colors = MaterialTheme.colorScheme
         val typography = MaterialTheme.typography

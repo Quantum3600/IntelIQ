@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
@@ -12,7 +11,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -37,7 +35,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,7 +43,7 @@ import com.techbrains.inteliq.presentation.theme.ComponentStyles
 import com.techbrains.inteliq.presentation.theme.IntelIQTheme
 
 /**
- * Neobrutalist Floating Navigation Bar for Mobile with animated expanding tabs, hard shadow & border
+ * Floating Navigation Bar for Mobile with animated expanding tabs.
  */
 @OptIn(ExperimentalFoundationStyleApi::class)
 @Composable
@@ -82,16 +79,6 @@ fun FloatingNavigationBar(
                     animationSpec = tween(durationMillis = 220, easing = FastOutSlowInEasing),
                     label = "ContentColorAnimation",
                 )
-                val borderColor by animateColorAsState(
-                    targetValue = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else Color.Transparent,
-                    animationSpec = tween(durationMillis = 220, easing = FastOutSlowInEasing),
-                    label = "BorderColorAnimation"
-                )
-                val borderWidth by animateDpAsState(
-                    targetValue = if (isSelected) 2.dp else 0.dp,
-                    animationSpec = tween(durationMillis = 220, easing = FastOutSlowInEasing),
-                    label = "BorderWidthAnimation"
-                )
 
                 val itemShape = remember(item.destination) {
                     when (item.destination) {
@@ -116,11 +103,6 @@ fun FloatingNavigationBar(
                         .height(56.dp)
                         .clip(itemShape)
                         .background(containerColor)
-                        .then(
-                            if (borderWidth > 0.dp && borderColor != Color.Transparent) {
-                                Modifier.border(width = borderWidth, color = borderColor, shape = itemShape)
-                            } else Modifier
-                        )
                         .clickable(
                             interactionSource = interactionSource,
                             indication = null,

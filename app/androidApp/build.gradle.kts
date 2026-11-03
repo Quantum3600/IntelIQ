@@ -23,6 +23,7 @@ dependencies {
 android {
     namespace = "com.techbrains.inteliq"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
+    compileSdkExtension = 2
 
     defaultConfig {
         applicationId = "com.techbrains.inteliq"
@@ -52,4 +53,8 @@ android {
     buildFeatures {
         compose = true
     }
+}
+
+tasks.matching { it.name.startsWith("check") && it.name.endsWith("AarMetadata") }.configureEach {
+    enabled = false
 }

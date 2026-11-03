@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 @OptIn(ExperimentalFoundationStyleApi::class)
 object SwitchStyles {
 
-    /** Neobrutalist Switch Track Style */
+    /** Switch Track Style */
     @Composable
     fun switchTrackStyle(isChecked: Boolean): Style {
         val colors = MaterialTheme.colorScheme
@@ -21,7 +21,7 @@ object SwitchStyles {
         }
     }
 
-    /** Neobrutalist Switch Thumb Style */
+    /** Switch Thumb Style */
     @Composable
     fun switchThumbStyle(isChecked: Boolean): Style {
         val colors = MaterialTheme.colorScheme

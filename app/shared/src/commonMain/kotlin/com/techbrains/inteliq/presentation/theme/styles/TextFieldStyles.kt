@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalFoundationStyleApi::class)
 object TextFieldStyles {
 
-    /** Neobrutalist Text Field Style */
+    /** Text Field Style */
     val textFieldStyle: Style
         @Composable get() = textFieldStyle(shape = RoundedCornerShape(12.dp))
 

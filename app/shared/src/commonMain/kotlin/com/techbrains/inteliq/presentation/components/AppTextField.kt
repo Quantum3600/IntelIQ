@@ -37,24 +37,22 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.techbrains.inteliq.presentation.theme.styles.TextFieldStyles
 
 /**
- * Custom Neobrutalist Text Field built with [BasicTextField].
+ * Custom Text Field built with [BasicTextField].
  *
  * Features:
  * - Uniform height across all field types (whether with or without icons/eye buttons).
  * - Customizable [Shape] (defaults to [RoundedCornerShape](12.dp)).
- * - Hard offset drop shadow & thick border that dynamically shifts on focus.
+ * - Clean focus state response.
  * - Password visibility eye-toggle button.
- * - Allocated shadow clearance space so shadows are never clipped by parent bounds.
  */
 @OptIn(ExperimentalFoundationStyleApi::class)
 @Composable
-fun NeobrutalistTextField(
+fun AppTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -68,8 +66,7 @@ fun NeobrutalistTextField(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     leadingIcon: (@Composable () -> Unit)? = null,
     trailingIcon: (@Composable () -> Unit)? = null,
-    style: Style? = null,
-    shadowClearance: Dp = 0.dp
+    style: Style? = null
 ) {
     var isPasswordVisible by remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
@@ -95,9 +92,7 @@ fun NeobrutalistTextField(
         }
 
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(end = shadowClearance, bottom = shadowClearance)
+            modifier = Modifier.fillMaxWidth()
         ) {
             BasicTextField(
                 value = value,

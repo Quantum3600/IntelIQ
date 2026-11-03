@@ -18,11 +18,11 @@ enum class ListItemPosition {
 @OptIn(ExperimentalFoundationStyleApi::class)
 object CardStyles {
 
-    /** Standalone Neobrutalist Card / List Item Style */
+    /** Standalone Card / List Item Style */
     val listItemCardStyle: Style
         @Composable get() = cardStyle()
 
-    /** Custom Neobrutalist Card Style with customizable shape */
+    /** Custom Card Style with customizable shape */
     @Composable
     fun cardStyle(shape: Shape? = null): Style {
         val colors = MaterialTheme.colorScheme

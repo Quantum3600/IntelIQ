@@ -67,9 +67,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.techbrains.inteliq.presentation.components.NeobrutalistButton
-import com.techbrains.inteliq.presentation.components.NeobrutalistButtonVariant
-import com.techbrains.inteliq.presentation.components.NeobrutalistTextField
+import com.techbrains.inteliq.presentation.components.AppButton
+import com.techbrains.inteliq.presentation.components.AppButtonVariant
+import com.techbrains.inteliq.presentation.components.AppTextField
 import com.techbrains.inteliq.presentation.theme.IntelIQTheme
 import inteliq.app.shared.generated.resources.Res
 import inteliq.app.shared.generated.resources.splash
@@ -371,7 +371,7 @@ fun AuthFormPane(
                     exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut()
                 ) {
                     Column {
-                        NeobrutalistTextField(
+                        AppTextField(
                             value = state.name,
                             onValueChange = { onIntent(AuthIntent.NameChanged(it)) },
                             label = "FULL NAME",
@@ -393,7 +393,7 @@ fun AuthFormPane(
                 }
 
                 // Email field
-                NeobrutalistTextField(
+                AppTextField(
                     value = state.email,
                     onValueChange = { onIntent(AuthIntent.EmailChanged(it)) },
                     label = "EMAIL",
@@ -417,7 +417,7 @@ fun AuthFormPane(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Password field
-                NeobrutalistTextField(
+                AppTextField(
                     value = state.password,
                     onValueChange = { onIntent(AuthIntent.PasswordChanged(it)) },
                     label = "PASSWORD",
@@ -491,10 +491,10 @@ fun AuthFormPane(
                 Spacer(modifier = Modifier.height(20.dp))
 
                 // Primary Submit Button
-                NeobrutalistButton(
+                AppButton(
                     onClick = { onIntent(AuthIntent.SubmitAuth) },
                     enabled = !state.isLoading && state.email.isNotBlank() && state.password.isNotBlank(),
-                    variant = NeobrutalistButtonVariant.Primary,
+                    variant = AppButtonVariant.Primary,
                     shape = RoundedCornerShape(32.dp),
                     modifier = Modifier
                         .fillMaxWidth()

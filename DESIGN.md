@@ -6,11 +6,22 @@ as opinionated and specific to this product — a knowledge-tracing platform
 where a real model tracks per-skill mastery — not a generic ed-tech shell.
 
 > **Source of truth:** the five AXIOM mockups (Home, Learn, Discover,
-> Practice, Profile). Where this document and a mockup disagree, the mockup
+> Practice, Profile) for **layout, content, hierarchy and component
+> inventory**. Where this document and a mockup disagree on those, the mockup
 > wins *unless* the item is listed in §10 (mockup issues we are deliberately
 > not copying). Screens with no mockup yet (Question, Answer feedback, Auth,
 > Onboarding, dark mode) are marked **[no mockup]** and must be restyled to
 > match this language when designed.
+>
+> **Visual-language revamp (supersedes the mockups' surface styling).** The
+> mockups are neobrutalist: thick ink borders, hard offset shadows, flat
+> paper. That read as informal for a product whose pitch is a real
+> knowledge-tracing model, so the surface language is replaced by
+> **a mesh-gradient backdrop + Haze glass surfaces + ProShape continuous
+> corners**, kept deliberately quiet. On *surface styling* (borders, shadows,
+> fills, radii, press mechanics) this document wins over the mockups; a
+> restyled mockup pass is tracked as D5 in §10. The color system is
+> unchanged and stays dynamic (§2.1).
 
 ## 1. What we take from each reference, and what we deliberately skip
 
@@ -32,7 +43,7 @@ that model output surfaces.
 
 ### 2.1 Color
 
-Warm paper, hard ink, and one loud **volt-lime** action color. Lime is the
+A quiet, tone-matched backdrop, soft ink, and one **volt-lime** action color. Lime is the
 brand/action signal; **green is no longer the primary** — it now means
 "success / progress / easy". The mastery scale is functional (it encodes
 model output), not decorative, and is strictly tied to DKT thresholds.
@@ -41,12 +52,13 @@ source before freezing tokens.
 
 | Token | Hex | Role |
 |---|---|---|
-| `ink` | `#14172B` | Text, all borders, hard shadows on light surfaces |
-| `paper` | `#FBFAF6` | Page background |
-| `paper-raised` | `#F6F4EE` | Cards, sheets, nested containers (warm off-white, not pure white) |
-| `paper-sunken` | `#E9E6DD` | Inset tracks, empty progress bars, disabled/locked fills, table header |
+| `ink` | `#14172B` | Text and icons on light surfaces; hairlines at 10–12% alpha. No longer used for thick borders or shadows |
+| `paper` | `#FBFAF6` | Base of the page and mesh (maps to `colorScheme.background`) |
+| `paper-raised` | `#F6F4EE` | **Solid** surfaces: dense cards, table containers, nested tiles (maps to `surfaceContainer`; warm off-white, not pure white) |
+| `paper-sunken` | `#E9E6DD` | Inset tracks, empty progress bars, disabled/locked fills, table header (maps to `surfaceContainerHighest`) |
 | `signal` | `#E4FF1A` | **Primary action/brand (volt-lime)** — primary CTAs, active nav item, "You" rows, current node, selected chips. Always carries `ink` text, never used as text color |
 | `signal-soft` | `#F4FFA0` | Hero-card glow, subtle highlight panels, "NEXT" lesson row |
+| `signal-stroke` | `ink` @ ~50% | 1.dp definition stroke on lime fills **in light mode only**, so the fill keeps a ≥ 3:1 boundary against light surroundings (lime on near-white is ~1.2:1). Starting value — verify. Not needed in dark mode |
 | `flame` | `#FF8A00` | Streak, POTD, XP-boost, Hot tag — momentum/urgency |
 | `sky` | `#3DB8FF` | Secondary action (Pick Random, Resume, Continue), Next-Milestone tag, Linear-Algebra-type tracks |
 | `grape` | `#A64CFF` | Competitive layer: Arena, leagues, Elo, Diamond tier |
@@ -76,6 +88,16 @@ collide with the mastery scale. Therefore:
 - Difficulty is shown **only** as a labelled pill using `mint` / `flame-soft` / `rose` tints — never as a bar fill that could be read as mastery.
 - Anything that represents **model mastery** (skill nodes, Topic Mastery bars, mastery chips, trend lines) uses the band colors above, chosen by value, and always includes the band label or number.
 - Progress that is *completion* (lessons done, quests solved, roadmap %) uses `mint`.
+
+**Semantic colors on glass.** Anything whose hue carries meaning — mastery
+bands, difficulty pills, accent tags, mint/rose states — is drawn as an
+**opaque or tint-on-solid fill, never as glass over the mesh**, because a
+backdrop shifts hue. Glass holds neutrals, text and the lime action only.
+
+**The palette stays dynamic.** Every neutral, container and mesh color is read
+from the `materialKolor` scheme at runtime (see below); the hex values in the
+table are the light-mode reference sampled from the mockups, not constants to
+hard-code. Accent tokens and mastery bands stay fixed.
 
 #### Palette generation with `materialKolor`
 Material 3 theme generation still uses `materialKolor` with
@@ -112,27 +134,85 @@ fun AppTheme(
 }
 ```
 
-**Dark mode ("Deep Work") [no mockup — proposal]:** background `#0F1220`,
-cards `#171B2E`, text `#EAEBF2`. `signal` stays lime (it pops on dark) with
-`ink` text. Borders become light (`#EAEBF2`, 2.dp) so the outline language
-survives; hard shadows use `#05070F` on cards and `signal` on the single
-primary CTA of a screen. Accent tints darken ~30%. Needs a mockup pass
-before build.
+**Dark mode ("Deep Work") [no mockup — proposal]:** base `#0F1220`, solid
+surfaces `#171B2E`, text `#EAEBF2`. The mesh moves to the dark end of its tonal
+range (§2.2) and glass uses Haze's dark response. `signal` stays lime with
+`ink` text and needs no stroke. Hairlines are `#EAEBF2` at 10–12%. Accent tints
+darken ~30%. Needs a mockup pass before build.
 
-### 2.2 Neobrutalist shape & shadow language
+### 2.2 Surface & shape language — mesh, glass, continuous corners
 
-Bold, high-contrast, hard-edged — but with **very large corner radii**.
-The mockups are neobrutalist in border/shadow and soft-geometric in shape:
+Quiet and precise. Depth comes from **material and tone**, not outlines or
+offset shadows.
 
-- **Hard offset shadows only**, zero blur. Three tiers, always bottom-right:
-    - Hero/section card: `3.dp` ink border, `8.dp` x/y shadow
-    - Standard card, tile, nav item: `2.dp` border, `4.dp` shadow
-    - Chip, pill, inline tag: `1.5.dp` border (or none for tinted tags), `2.dp` shadow max
-- **Corner radii:** section/hero cards `28–32.dp`; nested cards and tiles `20–24.dp`; buttons, chips, tags, search, stat pills are **full pills**. Table containers `24.dp` with square internal rows.
-- **Tactile press:** buttons, nav items, and tappable cards translate toward the shadow (`4.dp → 1.dp`) in one frame and return on release.
-- **Selected state = lime fill + ink border + shadow** (active nav item, active tab, active filter chip uses solid `ink` fill with paper text instead — see §5).
-- **Decoration:** large cards may carry a single oversized, low-contrast glyph or radial `signal-soft` glow in a corner (e.g. the faint *fx* on the daily-problem card, lime glow on hero cards). One per card, never behind text that needs to be read.
-- **Compose Styles API:** all of the above is expressed through `androidx.compose.foundation.style.Style` (§6).
+**Three layers**
+
+1. **Backdrop — mesh gradient.** One full-screen mesh behind everything, from
+   the app's own mesh-gradient library, and the *only* `hazeSource`. Its colors
+   come from the dynamic scheme (`background`, `primaryContainer`,
+   `secondaryContainer`, `tertiaryContainer`, `surfaceContainer*`), low chroma.
+   At most one `signal-soft` glow point at ≤ 35% alpha, never under body text.
+   Accent tokens and mastery colors never appear in the mesh. Static by
+   default; optional slow drift (§7).
+2. **Surfaces — glass or solid.** See the rules below.
+3. **Content — text, icons, chips, charts.** Always legible without relying on
+   what is behind it.
+
+**Mesh legibility rule.** Keep the mesh inside a narrow tonal band (starting
+point: tone ~90–97 in light, ~8–18 in dark) so `onSurface` text over glass
+passes 4.5:1 at the worst point. Enforce it with a test that samples the mesh
+on a grid, applies the glass tint, and asserts contrast, rather than by eye.
+
+**Glass vs solid**
+
+- **Glass** (`GlassStyle.regular` only — never `clear` behind text): top bar,
+  sidebar / bottom bar, hero cards, a focal side-column panel, sheets and
+  dialogs, the current-node tooltip.
+- **Solid** (`paper-raised` + 1.dp hairline): everything repeated or dense —
+  table rows and containers, catalog and community cards, stat tiles, the
+  question card, nested panels. Haze notes that glass can be costly in dense
+  scrolling layouts, and solid keeps text contrast independent of the backdrop.
+- **One glass level.** Anything nested inside a glass surface is a solid tonal
+  fill, never glass-on-glass.
+- **Budget.** Starting guideline: no more than ~6 glass surfaces visible at
+  once on Compact. Measure on a low-end device and adjust (D6).
+- **Merge related controls.** The top-bar chip cluster and segmented controls
+  are one `hazeGlassContainer` so they read as a single object.
+- **No extra borders or shadows on glass.** The material supplies its own rim
+  and specular edge. Hairlines belong to solid surfaces only. There are no drop
+  shadows anywhere.
+- **Fallbacks.** On renderers without refraction, Haze keeps tint, rounded
+  shape and rim and drops refraction and blur. Never let meaning depend on
+  refraction.
+
+**Corners — ProShape (continuous)**
+
+| Tier | Radius | Used for |
+|---|---|---|
+| Hero | `32.dp` | Hero cards, sheets, dialogs |
+| Card | `24.dp` | Standard cards, bars, table containers (rows stay square inside) |
+| Tile / nested | `20.dp` | Tiles, nested panels. **Concentric rule:** inner radius = outer radius − padding between them |
+| Pill | half the fixed height | Buttons (48.dp → 24.dp), chips and tags (28.dp → 14.dp), search, stat pills |
+
+All radii live in one `Radii` object and are consumed through `AppShapes`
+(§6.4), so the corner library can be swapped in one file. Glass surfaces take
+the same radii as `RoundedCornerShape`, because Haze's glass `shape` is
+`RoundedCornerShape`-typed (see §6.7, risk 1).
+
+**States**
+
+- **Selected = solid lime pill with `ink` text** (active nav item, active tab).
+  Active *filter* chip uses a solid `onSurface` fill with `surface` text
+  instead (see §5). In light mode lime fills carry `signal-stroke`.
+- **Press:** glass controls use Haze's press response (`scale(0.98f)` plus
+  lighting). Solid controls darken their fill ~12%. No translate, no shadow
+  collapse.
+- **Decoration:** a large card may carry one oversized glyph at ≤ 8% alpha in a
+  corner, never behind text that needs to be read. The mesh provides the glow,
+  so cards carry no glow of their own, except the hero's `signal-soft` glow.
+- **Compose Styles API:** non-glass styling is expressed through
+  `androidx.compose.foundation.style.Style`; glass is applied with Haze
+  modifiers (§6).
 
 ### 2.3 Type
 
@@ -144,6 +224,13 @@ plus a heavy use of mono for labels.
 - **Data / labels — mono** (IBM Plex Mono or JetBrains Mono). Eyebrows (`UNIT 03 · PATH TO MASTERY`), tags, stat captions, timers, XP, percentages, table headers, nav tag-pills. Eyebrows and table headers are **UPPERCASE with +6–8% tracking**.
 - Scale: 1.25 ratio from a 15sp base. **Floor of 11sp** for any mono label (several mockup labels are ~9–10sp and fail legibility). Body line length caps at ~70 characters.
 - **Math is typeset, not printed.** Formulas such as `P(E) = 1 − 365!/…` and `f(g(x))` must render as real math (see §10); raw `$…$` / `$$…$$` is never shown to a student.
+
+**Revamp adjustments [proposal — confirm against the restyled mockups].**
+The grotesque + Plex + mono families stay. To read calmer and more
+professional: display weight drops from heavy to SemiBold (600); mono is kept
+for *data* (numbers, timers, XP, percentages, table headers) and eyebrows
+drop to +4% tracking; all-caps stays only on eyebrows and table headers, not on
+button labels (hero CTAs excepted). The 11sp floor is unchanged.
 
 ### 2.4 Layout concept
 
@@ -169,14 +256,14 @@ Expanded (mockups)                            Compact (mobile, primary use)
 
 - Content sits on a 12-col grid inside a max-width container; **main column ≈ 2/3, side column ≈ 1/3**. Home, Learn (tree + lesson panel), Practice (header card + completion card) and Profile (heatmap + league) all use this split.
 - Breakpoints: **Compact** (<600dp) bottom bar, single column, side-column cards stack beneath main content; **Medium** (600–1000dp) icon-only rail, single column with 2-up grids; **Expanded** (≥1000dp) labelled sidebar with tag-pills, two-column content.
-- Sidebar and top bar are separated from content by a **4.dp solid ink rule** (right edge of sidebar, bottom edge of top bar). Both stay fixed while content scrolls.
+- Sidebar and top bar are **glass surfaces** floating over the mesh (inset 12.dp from the window edge on Medium/Expanded, edge-to-edge on Compact), separated from content by material, not by rules. Both stay fixed while content scrolls beneath them. Make the scroll container a `hazeSource` above the backdrop so content blurs under the bars.
 
 ## 3. Navigation
 
 Five items, bottom bar (compact) / sidebar (expanded). Each item has an icon,
 a label, and — in the expanded sidebar — a **right-aligned mono tag-pill**
-naming what lives inside. The active item is a lime fill with ink border and
-hard shadow.
+naming what lives inside. The active item is a solid lime pill with `ink` text (plus
+`signal-stroke` in light mode), no border, no shadow.
 
 | Nav item | Tag-pill | Maps to | Primary job |
 |---|---|---|---|
@@ -205,7 +292,7 @@ mint bar, `142 / 198 Quests Solved`.
 ## 4. Screen inventory
 
 Screens 1–3 are unchanged from the previous spec. **[no mockup]** screens
-should be built with the card/chip/shadow language above.
+should be built with the surface language in §2.2.
 
 1. **Splash** — brief logo fade. The wordmark is the pixel-style logotype with four colored dots (yellow, red, green, blue) — keep it as an asset, not live text.
 2. **Onboarding / placement check [no mockup]** — short adaptive diagnostic for KT cold-start.
@@ -269,7 +356,7 @@ in the mockup and should be added under the Active Track card.
 - **Directory hero card** — eyebrow chip (`COURSE DIRECTORY & SYLLABI`) + count (`84 Interactive Tracks Available`), display title, description, **search field with ⌘K hint** and lime `Search` button, horizontally scrolling **filter chips** (`All Courses (84)` active = solid ink fill with paper text, then subject chips).
 - **Featured & Popular** (3-up) — each card has a **tinted header block** (lime / sky / lavender) holding a large icon tile, a rating pill (`★ 4.9 (2,410)`) and a status badge (`Popular` mint, `Trending` orange, `Advanced` rose), then subject + level tags, title, 3-line description, `hours · enrolled` footer, and a **full-width CTA colored to match the header** (`ENROLL / START TRACK →`). Third card uses the neutral button when no accent applies.
 - **Full Course Catalog** (3-up grid, sortable `Sort by: Recommended`) — compact cards: subject tag (colored dot) + `Level n`, title, description, `N Modules · N Quests` pill, then footer `100% Free Access` + `ENROLL FREE`. **In-progress** cards swap the pill for a progress bar (`8/16 Modules · 50%`), show an `IN PROGRESS` lime tag, and the footer becomes `Module 9 Next` + sky `RESUME`.
-- **Community Learning Tracks & Micro-Courses** — bordered section with `Propose a Track` button; 3-up cards with a colored category tag (`Olympiad` rose, `Foundations` grape, `Micro-Track` sky), duration, title, description, author line (name + affiliation), rating, `VIEW SYLLABUS →`.
+- **Community Learning Tracks & Micro-Courses** — solid tonal section (not glass) with `Propose a Track` button; 3-up cards with a colored category tag (`Olympiad` rose, `Foundations` grape, `Micro-Track` sky), duration, title, description, author line (name + affiliation), rating, `VIEW SYLLABUS →`.
 
 **Where the model shows up (proposal):** the catalog's default sort,
 **Recommended**, is the model-driven sort; add a one-line `reason` on
@@ -307,46 +394,47 @@ confused with personal mastery.
 
 | Component | Behavior / styling |
 |---|---|
-| **Top-bar chip** | Pill, `2.dp` ink border, `2.dp` shadow, icon (colored) + two-line mono value (`18` / `Days`). Streak = flame, XP = grape gem, Goal = mint ring |
-| **Nav item** | Pill-ish row: icon, label, right-aligned tag-pill. Active = lime fill, `2.dp` border, `4.dp` shadow |
+| **Top-bar chip** | Pill on the glass top bar; the chips form one `hazeGlassContainer` cluster (merged surface, no per-chip border). Icon (colored) + two-line mono value (`18` / `Days`). Streak = flame, XP = grape gem, Goal = mint ring |
+| **Nav item** | Pill-ish row inside the glass sidebar / bottom bar: icon, label, right-aligned tag-pill. Active = solid lime pill, `ink` text (+ `signal-stroke` in light mode) |
 | **Eyebrow chip** | Small pill, UPPERCASE mono, tinted background (lime for context, sky/orange/grape by meaning) |
-| **Section / hero card** | `3.dp` border, `28–32.dp` radius, `8.dp` hard shadow, `paper-raised`; optional corner glow/glyph |
-| **Standard card / tile** | `2.dp` border, `20–24.dp` radius, `4.dp` shadow |
-| **Primary button** | Lime pill, ink text (uppercase label for hero CTAs), `2.dp` border, `4.dp` shadow, presses to `1.dp` |
-| **Secondary button** | Same shape; `sky` (go/resume) or `paper-raised` (neutral/enroll). Success CTA in lesson panel is `mint` |
-| **Filter chip / tab** | Pill; inactive = bordered paper, **active filter = solid ink fill + paper text**, **active tab/nav = lime** |
+| **Section / hero card** | **Glass** (`GlassStyles.hero`), `32.dp` radius, no border, no shadow; optional single oversized glyph at ≤ 8% alpha and the hero `signal-soft` glow |
+| **Glass bar** (top bar, sidebar, bottom bar) | **Glass** (`GlassStyles.bar`), `24.dp` radius (square on Compact edge-to-edge), content scrolls beneath it |
+| **Sheet / dialog** | **Glass** (`GlassStyles.hero`) over a scrim; solid fallback color supplied for reduced transparency |
+| **Standard card / tile** | Default **solid** `paper-raised`, `1.dp` hairline, `24.dp` (card) / `20.dp` (nested tile) radius. Promote to glass only for a focal side-column panel (§2.2 budget) |
+| **Primary button** | Solid lime pill (never glass), `ink` text, `48.dp` tall, `signal-stroke` in light mode, no shadow; press darkens the fill ~12% |
+| **Secondary button** | Same shape; `sky` (go/resume) or tonal `paper-raised` (neutral/enroll). Success CTA in lesson panel is `mint`. A neutral secondary sitting on a glass surface may itself be glass (`GlassStyles.control`) |
+| **Filter chip / tab** | Pill; inactive = tonal fill + hairline, **active filter = solid `onSurface` fill + `surface` text**, **active tab/nav = lime** |
 | **Segmented control** | Pill container; selected segment gets its own tint (difficulty segments follow difficulty tints) |
-| **Progress bar** | `12.dp` pill track on `paper-sunken` with `2.dp` ink border; `mint` fill (completion). Segmented variant for chapters; lime for the in-progress segment |
+| **Progress bar** | `8.dp` pill track on `paper-sunken`, no border; `mint` fill (completion). Segmented variant for chapters; lime for the in-progress segment |
 | **Donut gauge** | Thick ring on `paper-sunken`, tri-color arc for difficulty split, big numeral center |
-| **Mastery chip** | Skill name + band color + numeric mastery in mono + band label; `2.dp` border, `2.dp` shadow. *Unchanged — still the canonical model-output component* |
-| **Skill node (Learn)** | See §4.2 node table; `3.dp` ink outline, `4.dp` hard shadow; locked = desaturated + lock glyph |
+| **Mastery chip** | Skill name + band color + numeric mastery in mono + band label; opaque band-tinted fill with a hairline, never glass. *Unchanged semantics — still the canonical model-output component* |
+| **Skill node (Learn)** | See §4.2 node table; solid fill (band color when completed) with a `2.dp` `surface` ring to separate it from the path, no shadow; locked = desaturated + lock glyph |
 | **Difficulty pill** | Text label always (`Easy` / `Medium` / `Hard`), tinted fill, mono |
-| **Stat tile** | Mono caption with icon, display numeral, small mono footnote; border + `4.dp` shadow |
+| **Stat tile** | Mono caption with icon, display numeral, small mono footnote; solid tonal tile with hairline |
 | **Checklist row** | Checkbox, title, subtitle, right-aligned `+XP`; done = struck-through + mint check |
-| **Weekly-rhythm tile** | Square `2.dp` tile with weekday label and date; done / today / locked(dashed) |
+| **Weekly-rhythm tile** | `20.dp` tile with weekday label and date; done / today / locked (hairline dashed) |
 | **League row** | Rank medallion, avatar, name (+flag), points · tier, optional delta; **self row = lime** |
 | **Heatmap** | Rounded-square cells, 5 intensity steps, month header, weekday axis, legend |
 | **Course card** | Variants: *featured* (tinted header + colored CTA), *catalog* (tag row, pill, footer CTA), *in-progress* (adds bar + Resume), *community* (author + rating + syllabus link) |
-| **Table row** | Square rows inside a rounded bordered container, hairline dividers, status icon, pills for duration/difficulty, stacked tag chips, icon-button action |
+| **Table row** | Square rows inside a rounded (`24.dp`) **solid** container, hairline dividers, status icon, pills for duration/difficulty, stacked tag chips, icon-button action. Never glass (dense, lazy) |
 | **Badge card** | Colored circular glyph, name, mono requirement; locked badges grey out |
-| **Tooltip call-out** | Black pill with lime bolt glyph, paper text — used only for the current node |
-| **Question card** | Raised card with `2.dp` ink border and `4.dp` hard shadow; typeset math **[no mockup]** |
+| **Tooltip call-out** | Dark glass pill with lime bolt glyph and light text (solid `ink` if the glass budget is exceeded) — used only for the current node |
+| **Question card** | Raised **solid** card, `24.dp` radius, hairline; typeset math **[no mockup]**. Solid so math legibility never depends on the backdrop |
 | **Explanation panel** | Expands under feedback state; includes interactive worked steps **[no mockup]** |
 | **Recommendation card** | Next-Milestone treatment + `reason` string + start button |
 | **Progress trend chart** | Line/area per skill over time, mastery-band line color |
-| **Empty / error states** | Specific, contextual guidance in bordered containers |
+| **Empty / error states** | Specific, contextual guidance in solid tonal containers |
 
-## 6. Component Styles Architecture & Jetpack Compose Styles API (`@styles` skill)
+## 6. Surface System & Compose Styles API (`@styles` skill)
 
-All UI components integrate the **Jetpack Compose Styles API**
-(`androidx.compose.foundation.style.Style`), defining unified Neobrutalist
-styling tokens and state-driven behavior in `ComponentStyles.kt`.
+Surface styling has two seams: **Haze** for the mesh backdrop and glass, and the
+Compose **Styles API** (`androidx.compose.foundation.style.Style`) for
+everything that is not glass. Shapes come from one object, `AppShapes`.
 
-### 6.1 Prerequisites & Compiler Configuration
+### 6.1 Prerequisites & dependencies
 
-- `compileSdk` version 37+
-- `androidx.compose.foundation:foundation` version `1.12.0-alpha01`+
-- Opt-in to Experimental Foundation Style API:
+- Styles API prerequisites unchanged: `compileSdk` 37+,
+  `androidx.compose.foundation:foundation` `1.12.0-alpha01`+, and the opt-in:
 ```kotlin
 kotlin {
     compilerOptions {
@@ -354,72 +442,226 @@ kotlin {
     }
 }
 ```
-
-### 6.2 `ComponentStyles.kt` Setup
-
-Three card tiers (hero / standard / chip) plus button and mastery-chip
-styles. Radii and offsets are named constants so tiers stay consistent.
+- **Haze 2.1.0** (released 2 Nov 2026). Use the same version for every Haze
+  artifact. Glass is stable in 2.1, so no `@ExperimentalHazeApi` opt-in. Haze
+  2.1.0 is built against Kotlin 2.4.21 and Compose Multiplatform 1.12.2; keep
+  the client on compatible versions.
+- **ProShape** (`com.riadmahi:proshape`) for continuous corners.
+- **Mesh gradient** — the app's own library.
 
 ```kotlin
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.shape.CircleShape
+commonMain.dependencies {
+    implementation("dev.chrisbanes.haze:haze:2.1.0")
+    implementation("dev.chrisbanes.haze:haze-glass:2.1.0")
+    implementation("dev.chrisbanes.haze:haze-glass-material3:2.1.0") // optional: surface color from the theme
+    implementation("com.riadmahi:proshape:<latest-version>")
+    // implementation("<your mesh-gradient library>")
+}
+```
+
+### 6.2 Theme root
+
+`materialKolor` setup is unchanged (§2.1, `primary`/`onPrimary` still pinned to
+`signal`/`ink`). The theme now also owns the Haze state, the glass defaults and
+the backdrop.
+
+```kotlin
+val LocalHazeState = staticCompositionLocalOf<HazeState> { error("No HazeState") }
+
+@Composable
+fun AppTheme(
+    isDarkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit,
+) {
+    val dynamicThemeState = rememberDynamicMaterialThemeState(
+        isDark = isDarkTheme,
+        style = PaletteStyle.Vibrant,
+        specVersion = ColorSpec.SpecVersion.SPEC_2025,
+        seedColor = SeedColor,
+    )
+    val hazeState = rememberHazeState()
+
+    DynamicMaterialExpressiveTheme(
+        state = dynamicThemeState,
+        motionScheme = MotionScheme.expressive(),
+        animate = true,
+    ) {
+        // Composable; follows theme changes. Keep it here, not per call site.
+        val glassBase = GlassStyle.material3()
+
+        CompositionLocalProvider(
+            LocalHazeState provides hazeState,
+            LocalGlassStyle provides glassBase,
+            LocalGlassAccessibilitySettings provides rememberGlassAccessibility(),
+            // + AccentTokens / MasteryColors as before
+        ) {
+            Box(Modifier.fillMaxSize()) {
+                AppBackdrop(hazeState)      // the ONLY hazeSource
+                content()
+            }
+        }
+    }
+}
+```
+
+`rememberGlassAccessibility()` is an `expect`/`actual` that maps the platform's
+reduce-transparency, increase-contrast and bold-border settings onto
+`GlassAccessibilitySettings(reduceTransparency, increaseContrast, showBorders)`,
+because Haze does not read platform accessibility settings itself. Haze also
+picks the light or dark glass response from the host's system appearance
+(`LocalConfiguration.uiMode` on Android, `LocalSystemTheme` elsewhere), **not**
+from `MaterialTheme`. The in-app light/dark toggle must therefore be propagated
+to that host value for the subtree, otherwise glass stays in the wrong mode
+(§6.7, risk 3).
+
+### 6.3 Backdrop
+
+```kotlin
+@Composable
+fun AppBackdrop(hazeState: HazeState, modifier: Modifier = Modifier) {
+    val scheme = MaterialTheme.colorScheme
+    val accents = LocalAccentTokens.current
+    val colors = remember(scheme, accents) { meshPalette(scheme, accents) } // 3x3, row-major
+
+    // TODO: replace with the mesh-gradient composable from the app's own library.
+    // Keep `.hazeSource(hazeState)` on it, and keep it the only source.
+    YourMeshGradient(
+        colors = colors,
+        modifier = modifier.fillMaxSize().hazeSource(hazeState),
+    )
+}
+
+/** Starting palette. Low chroma, narrow tonal band (§2.2). Tune with the contrast test. */
+fun meshPalette(s: ColorScheme, a: AccentTokens): List<Color> = listOf(
+    s.background,           s.primaryContainer,        lerp(s.background, a.signalSoft, 0.35f), // one glow point
+    s.secondaryContainer,   s.surfaceContainer,        s.tertiaryContainer,
+    s.background,           s.surfaceContainerHigh,    s.primaryContainer,
+)
+```
+
+### 6.4 Shapes
+
+```kotlin
+object Radii {
+    val hero = 32.dp
+    val card = 24.dp
+    val tile = 20.dp
+    val button = 24.dp   // 48.dp tall: half height
+    val chip = 14.dp     // 28.dp tall: half height
+}
+
+object AppShapes {
+    private fun squircle(r: Dp) =
+        ProSquircleShape(topStart = r, topEnd = r, bottomEnd = r, bottomStart = r)
+
+    val hero = squircle(Radii.hero)
+    val card = squircle(Radii.card)
+    val tile = squircle(Radii.tile)
+    val button = squircle(Radii.button)
+    val chip = squircle(Radii.chip)
+}
+```
+
+### 6.5 Glass surfaces
+
+`GlassStyle`s are immutable and compare by identity in Haze 2.1, so they are
+**hoisted, never built inside composition**. Each surface applies
+`LocalGlassStyle` (the Material 3 base from §6.2) first and then its own style,
+so these only set what differs.
+
+```kotlin
+object GlassStyles {
+    val hero = GlassStyle { shape(RoundedCornerShape(Radii.hero)) }
+    val card = GlassStyle { shape(RoundedCornerShape(Radii.card)) }
+    val bar = GlassStyle { shape(RoundedCornerShape(Radii.card)) }
+    val control = GlassStyle {
+        shape(RoundedCornerShape(Radii.button))
+        pressed {
+            lightingIntensity(1f)
+            scale(0.98f)
+        }
+    }
+}
+
+@Composable
+fun GlassSurface(
+    modifier: Modifier = Modifier,
+    style: GlassStyle = GlassStyles.card,
+    content: @Composable BoxScope.() -> Unit,
+) {
+    Box(
+        modifier = modifier.hazeGlass(
+            input = HazeInput.Backdrop(LocalHazeState.current),
+            style = style,
+        ),
+        content = content,
+    )
+}
+```
+
+For tappable glass, share one `MutableInteractionSource` between the click
+behavior and `hazeGlass(..., interactionSource = ...)`, and pass
+`interactionReducedMotionPolicy = GlassReducedMotionPolicy.System` so
+reduce-motion is respected. Wrap the top-bar chips and segmented controls in
+`Modifier.hazeGlassContainer()`. Leave `HazeFeatureFlags.isPlatformBackdropEnabled`
+off: the native Android backdrop path is experimental.
+
+### 6.6 `ComponentStyles.kt` — solid surfaces
+
+Solid surfaces keep using `Style`. Everything resolves from the dynamic scheme
+and the shape tiers above. No shadows.
+
+```kotlin
 import androidx.compose.foundation.style.Style
 import androidx.compose.foundation.style.StyleScope
 import androidx.compose.ui.unit.dp
 
 object ComponentStyles {
 
-    /** Hero / section card — biggest radius, deepest shadow */
-    val heroCardStyle: Style = Style {
-        background(colors.surface)            // paper-raised
-        shape(RoundedCornerShape(28.dp))
-        border(width = 3.dp, color = colors.onBackground)
-        shadow(elevation = 0.dp, offsetX = 8.dp, offsetY = 8.dp, color = colors.onBackground)
-        padding(24.dp)
+    /** Standard solid card — dense or repeated content */
+    val cardStyle: Style = Style {
+        background(colors.surfaceContainer)                       // paper-raised
+        shape(AppShapes.card)
+        border(width = 1.dp, color = colors.onBackground.copy(alpha = 0.10f))
+        padding(16.dp)
     }
 
-    /** Standard card, tile, nav item */
-    val cardStyle: Style = Style {
-        background(colors.surface)
-        shape(RoundedCornerShape(20.dp))
-        border(width = 2.dp, color = colors.onBackground)
-        shadow(elevation = 0.dp, offsetX = 4.dp, offsetY = 4.dp, color = colors.onBackground)
-        padding(16.dp)
+    /** Nested tile inside a card or glass surface */
+    val tileStyle: Style = Style {
+        background(colors.surfaceContainer)
+        shape(AppShapes.tile)
+        border(width = 1.dp, color = colors.onBackground.copy(alpha = 0.10f))
+        padding(12.dp)
     }
 
     /** Pill chip / tag — tint supplied by caller via `style` override */
     val chipStyle: Style = Style {
-        shape(CircleShape)
-        border(width = 1.5.dp, color = colors.onBackground)
-        shadow(elevation = 0.dp, offsetX = 2.dp, offsetY = 2.dp, color = colors.onBackground)
+        shape(AppShapes.chip)
         padding(horizontal = 12.dp, vertical = 4.dp)
-        textStyle(typography.labelSmall) // mono, uppercase, tracked, >= 11sp
+        textStyle(typography.labelSmall) // mono, >= 11sp
     }
 
-    /** Primary lime button with tactile press */
+    /** Primary lime button */
     val primaryButtonStyle: Style = Style {
         background(colors.primary)            // signal (lime) — pinned override, see §2.1
-        shape(CircleShape)
-        border(width = 2.dp, color = colors.onBackground)
-        shadow(elevation = 0.dp, offsetX = 4.dp, offsetY = 4.dp, color = colors.onBackground)
+        shape(AppShapes.button)
+        border(width = 1.dp, color = AccentTokens.signalStroke) // transparent in dark mode
         minWidth(120.dp)
         minHeight(48.dp)
         textStyle(typography.labelLarge)
 
         pressed {
-            shadow(elevation = 0.dp, offsetX = 1.dp, offsetY = 1.dp, color = colors.onBackground)
+            background(colors.primary.copy(alpha = 0.88f))
         }
         disabled {
             background(colors.surfaceVariant)
-            shadow(elevation = 0.dp, offsetX = 0.dp, offsetY = 0.dp, color = colors.onBackground)
         }
     }
 
-    /** Skill mastery chip — unchanged semantics, now pill-shaped */
+    /** Skill mastery chip — opaque band-tinted fill supplied by caller; never glass */
     val masteryChipStyle: Style = Style {
-        shape(CircleShape)
-        border(width = 1.5.dp, color = colors.onBackground)
-        shadow(elevation = 0.dp, offsetX = 2.dp, offsetY = 2.dp, color = colors.onBackground)
+        shape(AppShapes.chip)
+        border(width = 1.dp, color = colors.onBackground.copy(alpha = 0.10f))
         padding(horizontal = 10.dp, vertical = 4.dp)
     }
 }
@@ -432,18 +674,18 @@ val StyleScope.typography: Typography
     @Composable get() = MaterialTheme.typography
 ```
 
-Accent tokens (`flame`, `sky`, `grape`, `rose`, `mint`, `signal-soft`) and
-mastery-band colors are **not** Material roles; read them from the app-level
-`AccentTokens` / `MasteryColors` CompositionLocals inside `Style { }` blocks.
-
-### 6.3 Applying Styles to Components
+Accent tokens (`flame`, `sky`, `grape`, `rose`, `mint`, `signal-soft`,
+`signal-stroke`) and mastery-band colors are **not** Material roles; read them
+from the app-level `AccentTokens` / `MasteryColors` CompositionLocals inside
+`Style { }` blocks (the `AccentTokens.signalStroke` above stands for that read;
+adapt it to however the locals are exposed in `StyleScope`).
 
 Custom components accept a `style: Style = Style` parameter and apply
 `Modifier.styleable()`:
 
 ```kotlin
 @Composable
-fun NeobrutalistButton(
+fun AppButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     style: Style = Style,
@@ -475,11 +717,36 @@ fun NeobrutalistButton(
 }
 ```
 
+### 6.7 Known risks — verify before freezing tokens
+
+1. **Glass corners vs ProShape corners.** Per the Haze docs, `GlassStyle`'s
+   `shape` takes a `RoundedCornerShape`, so glass boundaries use circular-arc
+   corners while solid surfaces use ProShape squircles. Side by side, a glass
+   hero and a solid card can show a subtle corner mismatch. Options: accept it
+   for v1; or add an outer `clip(AppShapes.x)` on the glass surface, which also
+   clips child content to the squircle but can trim the rim highlight at the
+   corners. Judge on a device before choosing.
+2. **ProShape fitness.** Its last release is 1.0.0, over a year old. Its README
+   describes iOS-style squircles and lists Android and iOS, with a desktop note;
+   it does not state G2 (curvature) continuity. Confirm it builds against the
+   client's current Kotlin / Compose Multiplatform versions and every target you
+   ship, and check the corners visually. If true G2 is a requirement, the
+   Capsule family of libraries states G2 explicitly (D7).
+3. **In-app theme toggle vs Haze appearance** (see §6.2).
+4. **Glass cost.** Measure scrolling screens on a low-end device. Start with
+   `HazePerformanceMode.Default`; Haze's own docs warn that glass containers
+   can be expensive in dense scrolling layouts.
+5. **Mesh library API.** §6.3 uses a placeholder composable. Whatever replaces
+   it must expose a drawn layer that can carry `Modifier.hazeSource`.
+6. **Lime on light.** `signal-stroke` at ~50% is a starting value; check the
+   resulting boundary contrast on the real mesh.
+
 ## 7. Motion
 
 One deliberate moment per major action, plus physical press mechanics:
 
-- **Button / card / nav press** — 1-frame translate toward the shadow (`4.dp → 1.dp`), return on release.
+- **Press** — glass controls use Haze's press response (`scale(0.98f)` + lighting, material and content); solid controls darken their fill ~12%. Reduce-motion snaps instead of animating (`GlassReducedMotionPolicy.System`).
+- **Mesh drift (optional)** — a very slow control-point drift, ≥ 20s per cycle, off by default on Compact and always off under reduce-motion or battery saver.
 - **Streak ring / goal chip fill** on session completion.
 - **Mastery-band transition** — brief color animation on a node, chip or Topic Mastery bar when a skill crosses a band threshold.
 - **Current node** — slow, subtle ring pulse and tooltip bob (≤ 2s loop, disabled under reduce-motion).
@@ -492,13 +759,18 @@ One deliberate moment per major action, plus physical press mechanics:
 - Mastery bands carry explicit labels (`Needs Attention`, `Developing`, …) alongside colors; difficulty is always a text pill; node state (solved / current / locked / boss) is exposed in the accessibility label, not by color or glyph alone.
 - **Lime is a fill, never a text color** — text on lime is always `ink`. Light-grey/pastel-on-pastel mono captions must meet 4.5:1; floor of 11sp.
 - Minimum touch target 44×44dp on table rows' action buttons, skill nodes, filter chips, heatmap cells (cells may be smaller visually but tappable area expands or the heatmap offers a tap-to-inspect tooltip).
-- High contrast from `2–3.dp` solid ink borders on all cards and interactive controls in light mode; dark-mode equivalents per §2.1.
+- **Glass legibility:** `onSurface` text on glass passes 4.5:1 at the worst point of the mesh (tested, §2.2). Text-bearing glass uses `regular`, never `clear`.
+- **Reduced transparency / increased contrast / visible borders** are mapped to Haze's `GlassAccessibilitySettings` (§6.2). With reduced transparency, glass falls back to a more diffused, more opaque material; supply an opaque fallback color that matches the in-app theme.
+- Solid surfaces carry a `1.dp` hairline; lime fills carry `signal-stroke` in light mode so every control keeps a ≥ 3:1 boundary. Dark-mode equivalents per §2.1.
+- No meaning depends on refraction or blur, which fallback renderers omit.
 - Timer on Question screen is informational and never auto-submits.
 - Reduce-motion setting disables pulse/bob and path-draw animations.
 
 ## 9. What to actively avoid
 
-- No soft gaussian drop shadows (`Modifier.shadow(elevation = 8.dp)`) — hard offset shadows only.
+- No drop shadows of any kind (hard-offset or gaussian), and no thick (≥ 2.dp) ink outlines on cards or buttons: those belong to the retired neobrutalist language. Depth comes from glass, tone and hairlines.
+- No glass-on-glass nesting, no glass on table rows or other lazy-list items, and no semantic color (mastery, difficulty, accent tags) rendered as glass over the mesh.
+- No saturated or high-contrast mesh: the mesh is atmosphere, not content.
 - No infinite streak-guilt mechanics: no streak-freeze/insurance **purchases**, no loss-framed copy.
 - **Boosters and timers are informational, not pressure.** `2X BOOST`, `XP happy hour`, `Streak Saver`, and reset countdowns may be shown but must not be monetised, must not gate learning, and must not appear in notifications as loss warnings.
 - **Hearts (`3 HEARTS LEFT`) must never lock a learner out of practice.** If kept at all, they only affect XP on a lesson attempt and refill without payment (see §10 decision D1).
@@ -516,6 +788,7 @@ One deliberate moment per major action, plus physical press mechanics:
 4. **Topic Mastery and difficulty colors collide with mastery bands** — resolved by the separation rule in §2.1.
 5. **Data consistency:** Profile shows `142 / 420 problems` and the sidebar shows `142 / 198 quests` — define *quest* vs *problem* once and use consistent terms; the user's league points differ between Home (3,450) and Profile (2,840) — decide whether these are weekly XP, total points, or different leagues and label accordingly. The Learn tree is titled "Linear Calculus Tree" under a *Calculus & Infinite Series* unit.
 6. **Tiny labels** (~9–10sp mono) throughout — raise to the 11sp floor.
+7. **Surface styling is superseded.** All five mockups use thick ink borders, hard offset shadows and flat paper. Keep their layout, content and hierarchy; apply §2.2 for surfaces.
 
 **Open decisions**
 
@@ -523,3 +796,6 @@ One deliberate moment per major action, plus physical press mechanics:
 - **D2 — Elo rating vs. mastery.** Global Elo (a competitive rating from duels/problems) is a different quantity from per-skill DKT mastery. Keep them visually separate (Elo = grape, mastery = band colors) and never show Elo as "skill level".
 - **D3 — Subject scope.** The mockups are math-specific (AXIOM, theorem/proof vocabulary). Confirm whether AXIOM is the whole product or the first subject pack; if the latter, keep nav tag-pills, titles ("Euler"), and copy data-driven rather than hard-coded.
 - **D4 — Dark mode and compact layouts** are derived, not mocked. Schedule a mockup pass before implementation.
+- **D5 — Restyled mockups.** Re-skin at least Home, Learn and Practice in the new language (mesh + glass + continuous corners) before building, so the glass/solid split and the type adjustments in §2.3 are judged on real screens.
+- **D6 — Glass budget and device floor.** Decide the lowest supported device tier and measure glass cost on it; the "~6 glass surfaces" guideline in §2.2 is a starting point, not a measurement.
+- **D7 — Corner library.** Confirm ProShape holds up (§6.7, risks 1–2). If G2 fidelity matters more than the current library choice, swap `AppShapes` to a library that states G2 continuity; no other file changes.

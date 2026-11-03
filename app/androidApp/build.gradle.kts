@@ -23,7 +23,6 @@ dependencies {
 android {
     namespace = "com.techbrains.inteliq"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
-    compileSdkExtension = 2
 
     defaultConfig {
         applicationId = "com.techbrains.inteliq"

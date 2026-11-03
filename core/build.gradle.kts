@@ -25,7 +25,6 @@ kotlin {
     android {
        namespace = "com.techbrains.inteliq.core"
        compileSdk = libs.versions.android.compileSdk.get().toInt()
-       compileSdkExtension = 2
        minSdk = libs.versions.android.minSdk.get().toInt()
     
        compilerOptions {

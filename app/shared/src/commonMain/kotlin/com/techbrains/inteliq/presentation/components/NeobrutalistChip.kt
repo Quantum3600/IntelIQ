@@ -42,7 +42,7 @@ fun NeobrutalistChip(
     containerColor: Color? = null,
     contentColor: Color? = null,
     leadingIcon: (@Composable () -> Unit)? = null,
-    shadowClearance: Dp = 4.dp
+    shadowClearance: Dp = 0.dp
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val styleState = rememberUpdatedStyleState(interactionSource) {

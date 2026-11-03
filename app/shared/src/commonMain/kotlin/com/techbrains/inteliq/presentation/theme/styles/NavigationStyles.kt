@@ -3,13 +3,10 @@ package com.techbrains.inteliq.presentation.theme.styles
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.style.ExperimentalFoundationStyleApi
 import androidx.compose.foundation.style.Style
-import androidx.compose.foundation.style.border
 import androidx.compose.foundation.style.contentPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.shadow.Shadow
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalFoundationStyleApi::class)
@@ -22,8 +19,6 @@ object NavigationStyles {
             return Style {
                 background(colors.surface)
                 shape(RoundedCornerShape(100.dp))
-                border(2.dp, colors.onSurface)
-                dropShadow(Shadow(color = colors.onSurface, offset = DpOffset(4.dp, 4.dp), radius = 0.dp))
                 contentPadding(6.dp)
             }
         }
@@ -36,7 +31,6 @@ object NavigationStyles {
             return Style {
                 background(colors.primaryContainer)
                 shape(shapes.medium)
-                border(1.5.dp, colors.primary)
             }
         }
 
@@ -47,8 +41,6 @@ object NavigationStyles {
             return Style {
                 background(colors.surface)
                 shape(RoundedCornerShape(24.dp))
-                border(2.dp, colors.onSurface)
-                dropShadow(Shadow(color = colors.onSurface, offset = DpOffset(4.dp, 4.dp), radius = 0.dp))
                 contentPadding(vertical = 16.dp, horizontal = 8.dp)
             }
         }
@@ -60,8 +52,6 @@ object NavigationStyles {
             return Style {
                 background(colors.surface)
                 shape(RoundedCornerShape(32.dp))
-                border(2.dp, colors.onSurface)
-                dropShadow(Shadow(color = colors.onSurface, offset = DpOffset(4.dp, 4.dp), radius = 0.dp))
                 contentPadding(16.dp)
             }
         }
@@ -88,8 +78,6 @@ object NavigationStyles {
         return Style {
             background(colors.primaryContainer)
             shape(effectiveShape)
-            border(2.dp, colors.onSurface)
-            dropShadow(Shadow(color = colors.onSurface, offset = DpOffset(3.5.dp, 3.5.dp), radius = 0.dp))
             contentPadding(horizontal = 12.dp, vertical = 8.dp)
         }
     }
@@ -119,8 +107,6 @@ object NavigationStyles {
             return Style {
                 background(colors.surfaceVariant)
                 shape(RoundedCornerShape(24.dp))
-                border(2.dp, colors.onSurface)
-                dropShadow(Shadow(color = colors.onSurface, offset = DpOffset(3.dp, 3.dp), radius = 0.dp))
                 contentPadding(12.dp)
             }
         }
@@ -132,8 +118,6 @@ object NavigationStyles {
             return Style {
                 background(colors.errorContainer)
                 shape(RoundedCornerShape(24.dp))
-                border(2.dp, colors.onSurface)
-                dropShadow(Shadow(color = colors.onSurface, offset = DpOffset(3.dp, 3.dp), radius = 0.dp))
                 contentPadding(horizontal = 16.dp, vertical = 10.dp)
             }
         }

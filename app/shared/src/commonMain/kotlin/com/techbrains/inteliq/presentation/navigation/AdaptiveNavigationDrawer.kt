@@ -35,7 +35,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontVariation
@@ -257,11 +256,10 @@ fun AdaptiveNavigationDrawer(
                 }
             }
 
-            // Max-width Log Out Button with Text & Icon & Neobrutalist Shadow
+            // Max-width Log Out Button with Text & Icon
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(end = 5.dp, bottom = 5.dp)
             ) {
                 Box(
                     modifier = Modifier

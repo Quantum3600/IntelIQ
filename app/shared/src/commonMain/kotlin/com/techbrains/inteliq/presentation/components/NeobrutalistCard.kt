@@ -27,7 +27,7 @@ fun NeobrutalistCard(
     modifier: Modifier = Modifier,
     shape: Shape? = null,
     style: Style? = null,
-    shadowClearance: Dp = 6.dp,
+    shadowClearance: Dp = 0.dp,
     content: @Composable ColumnScope.() -> Unit
 ) {
     val colors = MaterialTheme.colorScheme

@@ -37,7 +37,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -83,11 +82,6 @@ fun FloatingNavigationBar(
                     animationSpec = tween(durationMillis = 220, easing = FastOutSlowInEasing),
                     label = "ContentColorAnimation",
                 )
-                val shadowElevation by animateDpAsState(
-                    targetValue = if (isSelected) 4.dp else 0.dp,
-                    animationSpec = tween(durationMillis = 220, easing = FastOutSlowInEasing),
-                    label = "ShadowElevationAnimation"
-                )
                 val borderColor by animateColorAsState(
                     targetValue = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else Color.Transparent,
                     animationSpec = tween(durationMillis = 220, easing = FastOutSlowInEasing),
@@ -120,10 +114,6 @@ fun FloatingNavigationBar(
                 Box(
                     modifier = Modifier
                         .height(56.dp)
-                        .then(
-                            if (shadowElevation > 0.dp) Modifier.shadow(elevation = shadowElevation, shape = itemShape)
-                            else Modifier
-                        )
                         .clip(itemShape)
                         .background(containerColor)
                         .then(

@@ -43,7 +43,7 @@ fun NeobrutalistListItem(
     enabled: Boolean = true,
     leadingIcon: (@Composable () -> Unit)? = null,
     trailingContent: (@Composable () -> Unit)? = null,
-    shadowClearance: Dp = 5.dp
+    shadowClearance: Dp = 0.dp
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val styleState = rememberUpdatedStyleState(interactionSource) {

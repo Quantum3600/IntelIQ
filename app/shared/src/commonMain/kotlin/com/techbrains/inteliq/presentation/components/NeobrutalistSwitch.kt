@@ -32,7 +32,7 @@ fun NeobrutalistSwitch(
     onCheckedChange: ((Boolean) -> Unit)?,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    shadowClearance: Dp = 4.dp
+    shadowClearance: Dp = 0.dp
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 

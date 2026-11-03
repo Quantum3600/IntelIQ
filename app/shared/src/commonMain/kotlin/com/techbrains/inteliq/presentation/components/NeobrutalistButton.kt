@@ -57,7 +57,7 @@ fun NeobrutalistButton(
     enabled: Boolean = true,
     shape: Shape? = null,
     variant: NeobrutalistButtonVariant = NeobrutalistButtonVariant.Primary,
-    shadowClearance: Dp = 6.dp,
+    shadowClearance: Dp = 0.dp,
     content: @Composable RowScope.() -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -76,30 +76,18 @@ fun NeobrutalistButton(
         label = "NeobrutalistButtonCornerRadius"
     )
 
-    val animatedShadowOffset by animateDpAsState(
-        targetValue = if (isPressed) 1.dp else 4.dp,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioNoBouncy,
-            stiffness = Spring.StiffnessLow
-        ),
-        label = "NeobrutalistButtonShadowOffset"
-    )
-
     val buttonStyle = when (variant) {
         NeobrutalistButtonVariant.Primary -> ButtonStyles.primaryButtonStyle(
             cornerRadius = animatedCornerRadius,
-            shape = shape,
-            shadowOffsetDp = animatedShadowOffset
+            shape = shape
         )
         NeobrutalistButtonVariant.Secondary -> ButtonStyles.debugButtonStyle(
             cornerRadius = animatedCornerRadius,
-            shape = shape,
-            shadowOffsetDp = animatedShadowOffset
+            shape = shape
         )
         NeobrutalistButtonVariant.Surface -> ButtonStyles.primaryButtonStyle(
             cornerRadius = animatedCornerRadius,
-            shape = shape,
-            shadowOffsetDp = animatedShadowOffset
+            shape = shape
         )
     }
 

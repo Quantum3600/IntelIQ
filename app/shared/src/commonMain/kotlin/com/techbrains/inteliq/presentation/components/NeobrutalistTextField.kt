@@ -69,7 +69,7 @@ fun NeobrutalistTextField(
     leadingIcon: (@Composable () -> Unit)? = null,
     trailingIcon: (@Composable () -> Unit)? = null,
     style: Style? = null,
-    shadowClearance: Dp = 6.dp
+    shadowClearance: Dp = 0.dp
 ) {
     var isPasswordVisible by remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }

@@ -58,7 +58,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -200,9 +199,6 @@ fun CanvasBrandingPane(
     val isDark = colors.background.isDark()
 
     val canvasBg = if (isDark) Color(0xFF009382) else Color(0xFFF3E643)
-    val shapeBlue = if (isDark) Color(0xFF2563EB) else Color(0xFF3897F0)
-    val shapeRed = if (isDark) Color(0xFFDC2626) else Color(0xFFFF2A2A)
-    val strokeColor = if (isDark) colors.outline else Color(0xFF171B2E)
     val dotColor =
         if (isDark) colors.onBackground.copy(alpha = 0.12f) else Color.Black.copy(alpha = 0.15f)
 
@@ -212,7 +208,7 @@ fun CanvasBrandingPane(
             .background(canvasBg),
         contentAlignment = Alignment.Center
     ) {
-        // Dotted grid & corner geometry canvas layer
+        // Dotted grid canvas layer
         Canvas(modifier = Modifier.matchParentSize()) {
             val width = size.width
             val height = size.height
@@ -234,29 +230,6 @@ fun CanvasBrandingPane(
                 }
                 x += dotSpacing
             }
-
-            // 2. Corner Geometric Shapes
-            // Top-Right Blue Circle
-            val trRadius = (width * 0.22f).coerceIn(50.dp.toPx(), 160.dp.toPx())
-            val trCenter = Offset(width - trRadius * 0.2f, trRadius * 0.2f)
-            drawCircle(color = shapeBlue, radius = trRadius, center = trCenter)
-            drawCircle(
-                color = strokeColor,
-                radius = trRadius,
-                center = trCenter,
-                style = Stroke(width = 2.5.dp.toPx())
-            )
-
-            // Bottom-Left Red Circle
-            val blRadius = (width * 0.25f).coerceIn(55.dp.toPx(), 180.dp.toPx())
-            val blCenter = Offset(blRadius * 0.2f, height - blRadius * 0.2f)
-            drawCircle(color = shapeRed, radius = blRadius, center = blCenter)
-            drawCircle(
-                color = strokeColor,
-                radius = blRadius,
-                center = blCenter,
-                style = Stroke(width = 2.5.dp.toPx())
-            )
         }
 
         // Branding Content directly on Canvas
@@ -316,8 +289,7 @@ fun AuthFormPane(
             .fillMaxWidth()
             .then(if (isWideScreen) Modifier.fillMaxHeight() else Modifier),
         shape = formShape,
-        color = colors.surface,
-        border = BorderStroke(2.5.dp, strokeColor)
+        color = colors.surface
     ) {
         Box(
             modifier = if (isWideScreen) Modifier.fillMaxSize() else Modifier.fillMaxWidth(),
@@ -347,8 +319,7 @@ fun AuthFormPane(
                                 .fillMaxWidth()
                                 .padding(bottom = 12.dp),
                             shape = RoundedCornerShape(12.dp),
-                            color = colors.errorContainer,
-                            border = BorderStroke(2.dp, colors.error)
+                            color = colors.errorContainer
                         ) {
                             Row(
                                 modifier = Modifier.padding(10.dp),

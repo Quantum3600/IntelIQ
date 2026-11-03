@@ -34,7 +34,7 @@ fun NeobrutalistButtonGroup(
     onOptionSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    shadowClearance: Dp = 5.dp
+    shadowClearance: Dp = 0.dp
 ) {
     val colors = MaterialTheme.colorScheme
 

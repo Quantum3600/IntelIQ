@@ -3,14 +3,11 @@ package com.techbrains.inteliq.presentation.theme.styles
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.style.ExperimentalFoundationStyleApi
 import androidx.compose.foundation.style.Style
-import androidx.compose.foundation.style.border
 import androidx.compose.foundation.style.contentPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 
 enum class ButtonGroupPosition {
@@ -29,14 +26,11 @@ object ButtonStyles {
     ): Style {
         val colors = MaterialTheme.colorScheme
         val typography = MaterialTheme.typography
-        val shadowColor = colors.onBackground
         val effectiveShape = shape ?: RoundedCornerShape(cornerRadius)
 
         return Style {
-            dropShadow(Shadow(color = shadowColor, offset = DpOffset(shadowOffsetDp, shadowOffsetDp), radius = 0.dp))
             background(if (state.isEnabled) colors.primary else colors.surfaceVariant)
             shape(effectiveShape)
-            border(2.dp, shadowColor)
             textStyle(typography.labelLarge)
             contentPadding(horizontal = 16.dp, vertical = 12.dp)
         }
@@ -55,14 +49,11 @@ object ButtonStyles {
     ): Style {
         val colors = MaterialTheme.colorScheme
         val typography = MaterialTheme.typography
-        val shadowColor = colors.onBackground
         val effectiveShape = shape ?: RoundedCornerShape(cornerRadius)
 
         return Style {
-            dropShadow(Shadow(color = shadowColor, offset = DpOffset(shadowOffsetDp, shadowOffsetDp), radius = 0.dp))
             background(if (state.isEnabled) colors.secondary else colors.surfaceVariant)
             shape(effectiveShape)
-            border(2.dp, shadowColor)
             textStyle(typography.labelMedium)
             contentPadding(horizontal = 16.dp, vertical = 10.dp)
         }
@@ -89,7 +80,6 @@ object ButtonStyles {
     ): Style {
         val colors = MaterialTheme.colorScheme
         val typography = MaterialTheme.typography
-        val shadowColor = colors.onBackground
 
         val segmentShape = RoundedCornerShape(
             topStart = startCorner,
@@ -99,10 +89,8 @@ object ButtonStyles {
         )
 
         return Style {
-            dropShadow(Shadow(color = shadowColor, offset = DpOffset(shadowOffsetDp, shadowOffsetDp), radius = 0.dp))
             background(if (isSelected) colors.primaryContainer else if (state.isEnabled) colors.surface else colors.surfaceVariant)
             shape(segmentShape)
-            border(2.dp, shadowColor)
             textStyle(typography.labelLarge)
             contentPadding(horizontal = 16.dp, vertical = 10.dp)
         }

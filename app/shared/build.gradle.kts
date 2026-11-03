@@ -15,6 +15,7 @@ kotlin {
         freeCompilerArgs.add("-opt-in=androidx.compose.foundation.style.ExperimentalFoundationStyleApi")
     }
 
+    /*
     listOf(
         iosArm64(),
         iosSimulatorArm64()
@@ -24,6 +25,7 @@ kotlin {
             isStatic = true
         }
     }
+    */
     
     jvm()
     
@@ -89,6 +91,12 @@ kotlin {
             implementation(libs.compottie.core)
             implementation(libs.compottie.dot)
             implementation(libs.compottie.resources)
+            implementation(libs.stardust)
+            implementation(libs.haze)
+            implementation(libs.haze.blur)
+            implementation(libs.haze.blur.materials)
+            implementation(libs.haze.glass)
+            implementation(libs.capsule)
             api(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)

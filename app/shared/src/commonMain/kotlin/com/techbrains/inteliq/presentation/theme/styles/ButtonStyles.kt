@@ -3,12 +3,17 @@ package com.techbrains.inteliq.presentation.theme.styles
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.style.ExperimentalFoundationStyleApi
 import androidx.compose.foundation.style.Style
+import androidx.compose.foundation.style.animate
 import androidx.compose.foundation.style.contentPadding
+import androidx.compose.foundation.style.pressed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.kyant.capsule.Continuity
+import com.kyant.capsule.ContinuousCapsule
+import com.kyant.capsule.ContinuousRoundedRectangle
 
 enum class ButtonGroupPosition {
     Start, Middle, End, Single
@@ -20,16 +25,21 @@ object ButtonStyles {
     /** Primary Action Button Style with smooth animated parameters or custom shape */
     @Composable
     fun primaryButtonStyle(
-        cornerRadius: Dp = 24.dp,
+        cornerRadius: Dp = 32.dp,
         shape: Shape? = null
     ): Style {
         val colors = MaterialTheme.colorScheme
         val typography = MaterialTheme.typography
-        val effectiveShape = shape ?: RoundedCornerShape(cornerRadius)
+        val effectiveShape = shape ?: ContinuousRoundedRectangle(cornerRadius)
 
         return Style {
             background(if (state.isEnabled) colors.primary else colors.surfaceVariant)
             shape(effectiveShape)
+            pressed {
+                 animate {
+                     shape(ContinuousRoundedRectangle(16.dp))
+                 }
+            }
             textStyle(typography.labelLarge)
             contentPadding(horizontal = 16.dp, vertical = 12.dp)
         }

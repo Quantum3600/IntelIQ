@@ -1,5 +1,5 @@
 [versions]
-agp = "9.4.1"
+agp = "9.5.0"
 android-compileSdk = "37"
 android-minSdk = "29"
 android-targetSdk = "37"
@@ -24,9 +24,9 @@ materialKolor = "5.0.1"
 betterwindow = "1.1.0"
 compottie = "2.3.3"
 haze = "2.1.0"
-stardust = "1.0.5-alpha01"
+stardust = "2.0.0-alpha01"
 capsule = "1.2.0"
-
+backdrop = "2.0.1"
 
 [libraries]
 betterwindow = { module = "dev.brahmkshatriya:betterwindow", version.ref = "betterwindow" }
@@ -78,7 +78,9 @@ haze = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
 haze-blur = { module = "dev.chrisbanes.haze:haze-blur", version.ref = "haze" }
 haze-blur-materials = { module = "dev.chrisbanes.haze:haze-blur-materials", version.ref = "haze" }
 haze-glass = { module = "dev.chrisbanes.haze:haze-glass", version.ref = "haze" }
+haze-glass-material3 = { module = "dev.chrisbanes.haze:haze-glass-material3", version.ref = "haze" }
 capsule = { module = "top.ltfan.capsule:capsule", version.ref = "capsule" }
+liquid-glass = { module = "io.github.kyant0:backdrop", version.ref = "backdrop"}
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

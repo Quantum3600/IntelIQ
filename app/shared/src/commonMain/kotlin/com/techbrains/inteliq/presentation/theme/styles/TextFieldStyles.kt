@@ -20,7 +20,7 @@ object TextFieldStyles {
         val colors = MaterialTheme.colorScheme
 
         return Style {
-            background(colors.surface)
+            background(colors.surfaceVariant)
             shape(shape)
         }
     }

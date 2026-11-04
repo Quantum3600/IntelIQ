@@ -6,7 +6,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -56,9 +55,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -67,12 +68,33 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kyant.backdrop.Backdrop
+import com.kyant.backdrop.backdrops.layerBackdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.kyant.backdrop.drawBackdrop
+import com.kyant.backdrop.effects.blur
+import com.kyant.backdrop.effects.lens
+import com.kyant.backdrop.effects.vibrancy
+import com.kyant.capsule.Continuity
+import com.kyant.capsule.ContinuousCapsule
+import com.kyant.capsule.ContinuousRoundedRectangle
 import com.techbrains.inteliq.presentation.components.AppButton
 import com.techbrains.inteliq.presentation.components.AppButtonVariant
 import com.techbrains.inteliq.presentation.components.AppTextField
 import com.techbrains.inteliq.presentation.theme.IntelIQTheme
+import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.glass.GlassStyle
+import dev.chrisbanes.haze.glass.GlassStyleScope
+import dev.chrisbanes.haze.glass.hazeGlass
+import dev.chrisbanes.haze.glass.material3.material3
+import dev.chrisbanes.haze.hazeSource
 import inteliq.app.shared.generated.resources.Res
 import inteliq.app.shared.generated.resources.splash
+import io.github.quantum3600.stardust.StardustMesh
+import io.github.quantum3600.stardust.stardust
+import io.github.quantum3600.stardust.utils.rememberSimplexAnimatedMesh
+import io.ktor.client.request.invoke
 import org.jetbrains.compose.resources.painterResource
 
 private fun Color.isDark(): Boolean {
@@ -90,19 +112,15 @@ fun AuthScreen(
 ) {
     val colors = MaterialTheme.colorScheme
     val isDark = colors.background.isDark()
-    val screenBgColor = if (isDark) Color(0xFF009382) else Color(0xFFF3E643)
 
     BoxWithConstraints(
         modifier = modifier
             .fillMaxSize()
-            .background(screenBgColor)
-            .statusBarsPadding()
             .imePadding(),
         contentAlignment = Alignment.Center
     ) {
         val viewportWidth = maxWidth
         val isWideScreen = viewportWidth >= 720.dp
-
         if (isWideScreen) {
             // Wide Screen Layout: Left Branding Pane + Right Full-Height Form Pane (no right margin/padding)
             Row(
@@ -110,12 +128,22 @@ fun AuthScreen(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                CanvasBrandingPane(
+                BrandingPane(
                     isWideScreen = true,
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight()
-                        .padding(24.dp)
+                        .layout { measurable, constraints ->
+                            val extraRight = 32.dp.roundToPx()
+                            val placeable = measurable.measure(
+                                constraints.copy(
+                                    maxWidth = if (constraints.hasBoundedWidth) constraints.maxWidth + extraRight else constraints.maxWidth
+                                )
+                            )
+                            layout((placeable.width - extraRight).coerceAtLeast(0), placeable.height) {
+                                placeable.placeRelative(0, 0)
+                            }
+                        }
                 )
                 AuthFormPane(
                     state = state,
@@ -135,11 +163,22 @@ fun AuthScreen(
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                CanvasBrandingPane(
+                BrandingPane(
                     isWideScreen = false,
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
+                        .layout { measurable, constraints ->
+                            val extraBottom = 64.dp.roundToPx()
+                            val placeable = measurable.measure(
+                                constraints.copy(
+                                    maxHeight = if (constraints.hasBoundedHeight) constraints.maxHeight + extraBottom else constraints.maxHeight
+                                )
+                            )
+                            layout(placeable.width, (placeable.height - extraBottom).coerceAtLeast(0)) {
+                                placeable.placeRelative(0, 0)
+                            }
+                        }
                 )
                 AuthFormPane(
                     state = state,
@@ -161,6 +200,7 @@ fun AuthScreen(
                 shadowElevation = 0.dp,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
+                    .statusBarsPadding()
                     .padding(top = 32.dp, end = 20.dp)
             ) {
                 Row(
@@ -191,54 +231,46 @@ fun AuthScreen(
  * Canvas with dotted background, corner geometric shapes, logo, and slogan (NO white window container).
  */
 @Composable
-fun CanvasBrandingPane(
-    isWideScreen: Boolean = false,
-    modifier: Modifier = Modifier
+fun BrandingPane(
+    modifier: Modifier = Modifier,
+    isWideScreen: Boolean = false
 ) {
-    val colors = MaterialTheme.colorScheme
-    val isDark = colors.background.isDark()
-
-    val canvasBg = if (isDark) Color(0xFF009382) else Color(0xFFF3E643)
-    val dotColor =
-        if (isDark) colors.onBackground.copy(alpha = 0.12f) else Color.Black.copy(alpha = 0.15f)
-
     Box(
         modifier = modifier
-            .fillMaxSize()
-            .background(canvasBg),
+            .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        // Dotted grid canvas layer
-        Canvas(modifier = Modifier.matchParentSize()) {
-            val width = size.width
-            val height = size.height
+        val w = 4
+        val h = 4
+        val sunsetToNight = listOf(
+            Color(0xffF36E21), Color(0xffF0A92A), Color(0xffE7D043), Color(0xffE7E95D),
+            Color(0xffDFF168), Color(0xffB1E192), Color(0xff7FD3A9), Color(0xff5EC6B8),
+            Color(0xff4AB8C2), Color(0xff4099B9), Color(0xff3B79A8), Color(0xff395B93),
+            Color(0xff36447C), Color(0xff332E66), Color(0xff301E4E), Color(0xff2D1137),
+        )
+        val anim = rememberSimplexAnimatedMesh(
+            w,
+            h,
+            sunsetToNight,
+            animationSpeed = 0.5f,
+            noiseIntensity = 0.21f
+        )
 
-            // 1. Draw Dotted Background Grid
-            val dotSpacing = 20.dp.toPx()
-            val dotRadius = 1.8.dp.toPx()
-
-            var x = 10.dp.toPx()
-            while (x < width) {
-                var y = 10.dp.toPx()
-                while (y < height) {
-                    drawCircle(
-                        color = dotColor,
-                        radius = dotRadius,
-                        center = Offset(x, y)
-                    )
-                    y += dotSpacing
-                }
-                x += dotSpacing
-            }
-        }
-
+        StardustMesh(
+            Modifier.fillMaxSize().stardust(intensity = 0.5f),
+            width = w,
+            height = h,
+            state = anim.state
+        )
         // Branding Content directly on Canvas
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier
+                .statusBarsPadding()
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            val logoWidth = if (isWideScreen) 420.dp else 300.dp
+            val logoWidth = if (isWideScreen) 400.dp else 300.dp
             Image(
                 painter = painterResource(Res.drawable.splash),
                 contentDescription = "IntelIQ Logo",
@@ -279,9 +311,9 @@ fun AuthFormPane(
     }
 
     val formShape = if (isWideScreen) {
-        RoundedCornerShape(topStart = 32.dp, bottomStart = 32.dp, topEnd = 8.dp, bottomEnd = 8.dp)
+        ContinuousRoundedRectangle(topStart = 32.dp, bottomStart = 32.dp, topEnd = 8.dp, bottomEnd = 8.dp)
     } else {
-        RoundedCornerShape(topStart = 48.dp, topEnd = 48.dp, bottomStart = 36.dp, bottomEnd = 36.dp)
+        ContinuousRoundedRectangle(topStart = 48.dp, topEnd = 48.dp)
     }
 
     Surface(
@@ -407,7 +439,7 @@ fun AuthFormPane(
                         )
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(32.dp),
+                    shape = ContinuousCapsule,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
                         imeAction = ImeAction.Next
@@ -432,7 +464,7 @@ fun AuthFormPane(
                         )
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(32.dp),
+                    shape = ContinuousCapsule,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Password,
                         imeAction = ImeAction.Done
@@ -495,7 +527,7 @@ fun AuthFormPane(
                     onClick = { onIntent(AuthIntent.SubmitAuth) },
                     enabled = !state.isLoading && state.email.isNotBlank() && state.password.isNotBlank(),
                     variant = AppButtonVariant.Primary,
-                    shape = RoundedCornerShape(32.dp),
+                    shape = ContinuousCapsule(Continuity.Default),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp)
@@ -589,6 +621,7 @@ fun AuthFormPane(
         }
     }
 }
+
 
 @Preview
 @Composable

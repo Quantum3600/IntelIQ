@@ -96,6 +96,8 @@ kotlin {
             implementation(libs.haze.blur)
             implementation(libs.haze.blur.materials)
             implementation(libs.haze.glass)
+            implementation(libs.haze.glass.material3)
+            implementation(libs.liquid.glass)
             implementation(libs.capsule)
             api(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.viewmodelCompose)

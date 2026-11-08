@@ -1,6 +1,17 @@
 package com.techbrains.inteliq.presentation.navigation
 
 import com.techbrains.inteliq.IqLogo
+import com.techbrains.inteliq.presentation.theme.Flame
+import com.techbrains.inteliq.presentation.theme.LocalHazeState
+import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.rememberHazeState
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.glass.GlassStyle
+import dev.chrisbanes.haze.glass.hazeGlass
+import dev.chrisbanes.haze.glass.material3.material3
+
+
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +36,16 @@ import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +53,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,7 +68,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.techbrains.inteliq.presentation.theme.DarkThemeMode
-import com.techbrains.inteliq.presentation.theme.Flame
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+val LocalSharedTransitionScope = staticCompositionLocalOf<SharedTransitionScope?> { null }
+val LocalNavAnimatedVisibilityScope = staticCompositionLocalOf<AnimatedVisibilityScope?> { null }
 
 /**
  * Adaptive Window Size Classification (per official Material 3 / @adaptive skill)
@@ -66,6 +96,7 @@ val mainNavItems = listOf(
     NavigationNavItem("Profile", Icons.Default.Person, ScreenDestination.Main.Profile)
 )
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun AdaptiveNavigationLayout(
     currentTab: ScreenDestination.Main,
@@ -79,6 +110,8 @@ fun AdaptiveNavigationLayout(
     content: @Composable () -> Unit
 ) {
     val showTopHeader = currentTab != ScreenDestination.Main.Profile && currentTab != ScreenDestination.Main.Discover
+    val hazeState = LocalHazeState.current ?: rememberHazeState()
+    var isDrawerExpanded by rememberSaveable { mutableStateOf(true) }
 
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         val sizeClass = when {
@@ -95,7 +128,8 @@ fun AdaptiveNavigationLayout(
                         if (showTopHeader) {
                             TopHeaderAppLogoAndStats(
                                 isDarkTheme = isDarkTheme,
-                                onToggleDarkTheme = onToggleDarkTheme
+                                onToggleDarkTheme = onToggleDarkTheme,
+                                hazeState = hazeState
                             )
                         }
                     }
@@ -105,12 +139,19 @@ fun AdaptiveNavigationLayout(
                             .fillMaxSize()
                             .padding(innerPadding)
                     ) {
-                        content()
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .hazeSource(hazeState)
+                        ) {
+                            content()
+                        }
 
                         // Floating Navigation Bar anchored at bottom with shadow clearance space
                         FloatingNavigationBar(
                             currentTab = currentTab,
                             onTabSelected = onTabSelected,
+                            hazeState = hazeState,
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
                                 .navigationBarsPadding()
@@ -131,7 +172,8 @@ fun AdaptiveNavigationLayout(
                         currentTab = currentTab,
                         onTabSelected = onTabSelected,
                         onLogout = onLogout,
-                        isDarkThemeMode = if (isDarkTheme) DarkThemeMode.DARK else DarkThemeMode.LIGHT
+                        isDarkThemeMode = if (isDarkTheme) DarkThemeMode.DARK else DarkThemeMode.LIGHT,
+                        hazeState = hazeState
                     )
 
                     Scaffold(
@@ -139,7 +181,8 @@ fun AdaptiveNavigationLayout(
                             if (showTopHeader) {
                                 TopHeaderAppLogoAndStats(
                                     isDarkTheme = isDarkTheme,
-                                    onToggleDarkTheme = onToggleDarkTheme
+                                    onToggleDarkTheme = onToggleDarkTheme,
+                                    hazeState = hazeState
                                 )
                             }
                         }
@@ -147,6 +190,7 @@ fun AdaptiveNavigationLayout(
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
+                                .hazeSource(hazeState)
                                 .padding(innerPadding)
                         ) {
                             content()
@@ -156,27 +200,58 @@ fun AdaptiveNavigationLayout(
             }
 
             AdaptiveWindowSizeClass.EXPANDED -> {
-                // Desktop Layout: Floating Navigation Drawer + Main Header & Content
+                // Desktop Layout: Collapsible Navigation Drawer / Rail + Main Header & Content
                 Row(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
                 ) {
-                    AdaptiveNavigationDrawer(
-                        currentTab = currentTab,
-                        onTabSelected = onTabSelected,
-                        onLogout = onLogout,
-                        userName = userName,
-                        userEmail = userEmail,
-                        isDarkThemeMode = if(isDarkTheme) DarkThemeMode.DARK else DarkThemeMode.LIGHT
-                    )
+                    SharedTransitionLayout {
+                        AnimatedContent(
+                            targetState = isDrawerExpanded,
+                            transitionSpec = {
+                                (fadeIn(animationSpec = tween(220, delayMillis = 60)) togetherWith
+                                    fadeOut(animationSpec = tween(160)))
+                                    .using(SizeTransform(clip = false))
+                            },
+                            label = "DrawerRailTransition"
+                        ) { expanded ->
+                            CompositionLocalProvider(
+                                LocalSharedTransitionScope provides this@SharedTransitionLayout,
+                                LocalNavAnimatedVisibilityScope provides this@AnimatedContent
+                            ) {
+                                if (expanded) {
+                                    AdaptiveNavigationDrawer(
+                                        currentTab = currentTab,
+                                        onTabSelected = onTabSelected,
+                                        onLogout = onLogout,
+                                        userName = userName,
+                                        userEmail = userEmail,
+                                        isDarkThemeMode = if (isDarkTheme) DarkThemeMode.DARK else DarkThemeMode.LIGHT,
+                                        hazeState = hazeState,
+                                        onCollapse = { isDrawerExpanded = false }
+                                    )
+                                } else {
+                                    AdaptiveNavigationRail(
+                                        currentTab = currentTab,
+                                        onTabSelected = onTabSelected,
+                                        onLogout = onLogout,
+                                        isDarkThemeMode = if (isDarkTheme) DarkThemeMode.DARK else DarkThemeMode.LIGHT,
+                                        hazeState = hazeState,
+                                        onExpand = { isDrawerExpanded = true }
+                                    )
+                                }
+                            }
+                        }
+                    }
 
                     Scaffold(
                         topBar = {
                             if (showTopHeader) {
                                 TopHeaderAppLogoAndStats(
                                     isDarkTheme = isDarkTheme,
-                                    onToggleDarkTheme = onToggleDarkTheme
+                                    onToggleDarkTheme = onToggleDarkTheme,
+                                    hazeState = hazeState
                                 )
                             }
                         }
@@ -186,7 +261,13 @@ fun AdaptiveNavigationLayout(
                                 .fillMaxSize()
                                 .padding(innerPadding)
                         ) {
-                            content()
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .hazeSource(hazeState)
+                            ) {
+                                content()
+                            }
                         }
                     }
                 }
@@ -201,13 +282,28 @@ fun AdaptiveNavigationLayout(
 @Composable
 fun TopHeaderAppLogoAndStats(
     isDarkTheme: Boolean = false,
-    onToggleDarkTheme: () -> Unit = {}
+    onToggleDarkTheme: () -> Unit = {},
+    modifier: Modifier = Modifier,
+    hazeState: HazeState? = LocalHazeState.current
 ) {
-    Surface(
-        modifier = Modifier
+    val activeHaze = hazeState ?: LocalHazeState.current
+    val topBarModifier = if (activeHaze != null) {
+        modifier
             .fillMaxWidth()
-            .statusBarsPadding(),
-        color = MaterialTheme.colorScheme.surface,
+            .statusBarsPadding()
+            .hazeGlass(
+                input = HazeInput.Backdrop(activeHaze),
+                style = GlassStyle.material3()
+            )
+    } else {
+        modifier
+            .fillMaxWidth()
+            .statusBarsPadding()
+    }
+
+    Surface(
+        modifier = topBarModifier,
+        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.75f),
         shadowElevation = 0.dp
     ) {
         Row(

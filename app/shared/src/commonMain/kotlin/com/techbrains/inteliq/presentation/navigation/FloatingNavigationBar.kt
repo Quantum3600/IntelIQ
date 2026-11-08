@@ -39,70 +39,99 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kyant.capsule.ContinuousCapsule
+import com.kyant.capsule.ContinuousRoundedRectangle
 import com.techbrains.inteliq.presentation.theme.ComponentStyles
 import com.techbrains.inteliq.presentation.theme.IntelIQTheme
+import com.techbrains.inteliq.presentation.theme.LocalHazeState
+import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.hazeBlur
+import dev.chrisbanes.haze.blur.materials.HazeMaterials
+import dev.chrisbanes.haze.glass.GlassStyle
+import dev.chrisbanes.haze.glass.hazeGlass
+import dev.chrisbanes.haze.glass.material3.material3
+import io.github.quantum3600.stardust.stardustMeshAnimation
 
 /**
- * Floating Navigation Bar for Mobile with animated expanding tabs.
+ * Floating Navigation Bar for Mobile with animated expanding tabs and Haze glass blur.
  */
 @OptIn(ExperimentalFoundationStyleApi::class)
 @Composable
 fun FloatingNavigationBar(
     currentTab: ScreenDestination.Main,
     onTabSelected: (ScreenDestination.Main) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    hazeState: HazeState? = LocalHazeState.current
 ) {
+    val activeHaze = hazeState ?: LocalHazeState.current
+    val blurStyle = remember { HazeBlurStyle { blurRadius(20.dp) } }
+    val barModifier = if (activeHaze != null) {
+        modifier.hazeBlur(
+            input = HazeInput.Backdrop(activeHaze),
+            style = HazeMaterials.thin()
+        )
+    } else modifier
+
     Box(
-        modifier = modifier
+        modifier = barModifier
             .wrapContentSize()
+            .hazeBlur(
+                input = HazeInput.Backdrop(activeHaze),
+                style = blurStyle
+            )
             .styleable(
                 style = ComponentStyles.floatingNavBarStyle
             ),
         contentAlignment = Alignment.Center
     ) {
         Row(
-            modifier = Modifier.wrapContentSize().clip(RoundedCornerShape(32.dp)),
+            modifier = Modifier.wrapContentSize().clip(ContinuousCapsule),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             mainNavItems.forEach { item ->
                 val isSelected = currentTab == item.destination
                 val interactionSource = remember { MutableInteractionSource() }
-
-                val containerColor by animateColorAsState(
-                    targetValue = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
-                    animationSpec = tween(durationMillis = 220, easing = FastOutSlowInEasing),
-                    label = "ContainerColorAnimation",
-                )
                 val contentColor by animateColorAsState(
                     targetValue = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface,
                     animationSpec = tween(durationMillis = 220, easing = FastOutSlowInEasing),
                     label = "ContentColorAnimation",
                 )
-
                 val itemShape = remember(item.destination) {
                     when (item.destination) {
-                        ScreenDestination.Main.Home -> RoundedCornerShape(
+                        ScreenDestination.Main.Home -> ContinuousRoundedRectangle(
                             topStart = 32.dp,
                             bottomStart = 32.dp,
                             topEnd = 8.dp,
                             bottomEnd = 8.dp
                         )
-                        ScreenDestination.Main.Profile -> RoundedCornerShape(
+                        ScreenDestination.Main.Profile -> ContinuousRoundedRectangle(
                             topStart = 8.dp,
                             bottomStart = 8.dp,
                             topEnd = 32.dp,
                             bottomEnd = 32.dp
                         )
-                        else -> RoundedCornerShape(8.dp)
+                        else -> ContinuousRoundedRectangle(8.dp)
                     }
                 }
+                val backgroundModifier = if (isSelected) {
+                    modifier.clip(itemShape)
+                        .stardustMeshAnimation(
+                            2, 2, colors = listOf(
+                                MaterialTheme.colorScheme.primaryContainer,
+                                MaterialTheme.colorScheme.primary,
+                                MaterialTheme.colorScheme.secondary,
+                                MaterialTheme.colorScheme.tertiary
+                            ), 0.8f, 0.2f, 32
+                        )
+                } else modifier.clip(itemShape).background(MaterialTheme.colorScheme.surfaceVariant)
+
 
                 Box(
-                    modifier = Modifier
+                    modifier = backgroundModifier
                         .height(56.dp)
-                        .clip(itemShape)
-                        .background(containerColor)
                         .clickable(
                             interactionSource = interactionSource,
                             indication = null,

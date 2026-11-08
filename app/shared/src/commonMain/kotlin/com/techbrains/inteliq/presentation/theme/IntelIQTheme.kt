@@ -4,11 +4,16 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import com.materialkolor.DynamicMaterialTheme
 import com.materialkolor.PaletteStyle
 import com.materialkolor.dynamiccolor.ColorSpec
 import com.materialkolor.rememberDynamicMaterialThemeState
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.rememberHazeState
+
+val LocalHazeState = staticCompositionLocalOf<HazeState?> { null }
 
 // Default brand / seed color
 val DefaultSeedColor = Color(0xFF10B981) // Green seed color per DESIGN.md §2.1
@@ -43,6 +48,7 @@ fun IntelIQTheme(
     )
 
     val typography = appTypography()
+    val hazeState = rememberHazeState()
 
     DynamicMaterialTheme(
         state = dynamicThemeState,
@@ -51,6 +57,7 @@ fun IntelIQTheme(
     ) {
         CompositionLocalProvider(
             LocalTextStyle provides typography.bodyMedium,
+            LocalHazeState provides hazeState,
             content = content
         )
     }

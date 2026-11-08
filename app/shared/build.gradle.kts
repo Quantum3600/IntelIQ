@@ -73,6 +73,10 @@ kotlin {
        }
     }
     
+    tasks.matching { it.name.contains("AarMetadata") }.configureEach {
+        enabled = false
+    }
+    
     sourceSets {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)

@@ -39,7 +39,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontVariation
@@ -58,6 +57,7 @@ import com.techbrains.inteliq.presentation.theme.ComponentStyles
 import com.techbrains.inteliq.presentation.theme.DarkThemeMode
 import com.techbrains.inteliq.presentation.theme.IntelIQTheme
 import com.techbrains.inteliq.presentation.theme.LocalHazeState
+import com.techbrains.inteliq.presentation.theme.styles.NavLayoutType
 import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.blur.hazeBlur
@@ -168,28 +168,14 @@ fun AdaptiveNavigationDrawer(
                 .filter { it.destination != ScreenDestination.Main.Profile }
                 .forEach { item ->
                     val isSelected = currentTab == item.destination
-                       val interactionSource = remember { MutableInteractionSource() }
-                    val itemShape = if(!isSelected) {
-                        when(item.destination) {
-                            ScreenDestination.Main.Home -> ContinuousRoundedRectangle(
-                                topStart = 32.dp,
-                                bottomStart = 32.dp,
-                                topEnd = 8.dp,
-                                bottomEnd = 8.dp
-                            )
-                            ScreenDestination.Main.Practice -> ContinuousRoundedRectangle(
-                                topStart = 8.dp,
-                                bottomStart = 24.dp,
-                                topEnd = 8.dp,
-                                bottomEnd = 24.dp
-                            )
-                            else -> ContinuousRoundedRectangle(8.dp)
-                        }
-                    } else {
-                        ContinuousCapsule
-                    }
+                    val interactionSource = remember { MutableInteractionSource() }
+                    val itemShape = ComponentStyles.rememberAnimatedNavItemShape(
+                        destination = item.destination,
+                        isSelected = isSelected,
+                        layoutType = NavLayoutType.DRAWER
+                    )
                     val backgroundModifier = if (isSelected) {
-                        modifier.clip(itemShape)
+                        Modifier.clip(itemShape)
                             .stardustMeshAnimation(
                             2, 2, colors = listOf(
                                 MaterialTheme.colorScheme.primary,
@@ -198,7 +184,7 @@ fun AdaptiveNavigationDrawer(
                                 MaterialTheme.colorScheme.primaryContainer
                             ), 0.8f, 0.2f, 32
                         )
-                    } else modifier.clip(itemShape).background(MaterialTheme.colorScheme.surfaceVariant)
+                    } else Modifier.clip(itemShape).background(MaterialTheme.colorScheme.surfaceVariant)
 
                     val fontWidth by animateFloatAsState(
                         targetValue = if (isSelected) 125f else 100f,
@@ -274,7 +260,11 @@ fun AdaptiveNavigationDrawer(
 
         // Bottom: Profile Card + Full-Width Log Out Button
         val isProfileSelected = currentTab == ScreenDestination.Main.Profile
-        val profileCardShape = ContinuousRoundedRectangle(24.dp)
+        val profileCardShape = ComponentStyles.rememberAnimatedNavItemShape(
+            destination = ScreenDestination.Main.Profile,
+            isSelected = isProfileSelected,
+            layoutType = com.techbrains.inteliq.presentation.theme.styles.NavLayoutType.DRAWER
+        )
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp)

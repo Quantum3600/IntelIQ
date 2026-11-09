@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.style.ExperimentalFoundationStyleApi
 import androidx.compose.foundation.style.styleable
 import androidx.compose.material3.Icon
@@ -44,6 +43,7 @@ import com.kyant.capsule.ContinuousRoundedRectangle
 import com.techbrains.inteliq.presentation.theme.ComponentStyles
 import com.techbrains.inteliq.presentation.theme.IntelIQTheme
 import com.techbrains.inteliq.presentation.theme.LocalHazeState
+import com.techbrains.inteliq.presentation.theme.styles.NavLayoutType
 import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.blur.HazeBlurStyle
@@ -88,7 +88,7 @@ fun FloatingNavigationBar(
     ) {
         Row(
             modifier = Modifier.wrapContentSize().clip(ContinuousCapsule),
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             mainNavItems.forEach { item ->
@@ -99,25 +99,13 @@ fun FloatingNavigationBar(
                     animationSpec = tween(durationMillis = 220, easing = FastOutSlowInEasing),
                     label = "ContentColorAnimation",
                 )
-                val itemShape = remember(item.destination) {
-                    when (item.destination) {
-                        ScreenDestination.Main.Home -> ContinuousRoundedRectangle(
-                            topStart = 32.dp,
-                            bottomStart = 32.dp,
-                            topEnd = 8.dp,
-                            bottomEnd = 8.dp
-                        )
-                        ScreenDestination.Main.Profile -> ContinuousRoundedRectangle(
-                            topStart = 8.dp,
-                            bottomStart = 8.dp,
-                            topEnd = 32.dp,
-                            bottomEnd = 32.dp
-                        )
-                        else -> ContinuousRoundedRectangle(8.dp)
-                    }
-                }
+                val itemShape = ComponentStyles.rememberAnimatedNavItemShape(
+                    destination = item.destination,
+                    isSelected = isSelected,
+                    layoutType = NavLayoutType.FLOATING_BAR
+                )
                 val backgroundModifier = if (isSelected) {
-                    modifier.clip(itemShape)
+                    Modifier.clip(itemShape)
                         .stardustMeshAnimation(
                             2, 2, colors = listOf(
                                 MaterialTheme.colorScheme.primaryContainer,
@@ -126,8 +114,7 @@ fun FloatingNavigationBar(
                                 MaterialTheme.colorScheme.tertiary
                             ), 0.8f, 0.2f, 32
                         )
-                } else modifier.clip(itemShape).background(MaterialTheme.colorScheme.surfaceVariant)
-
+                } else Modifier.clip(itemShape).background(MaterialTheme.colorScheme.surfaceVariant)
 
                 Box(
                     modifier = backgroundModifier
@@ -140,7 +127,7 @@ fun FloatingNavigationBar(
                     contentAlignment = Alignment.Center
                 ) {
                     Row(
-                        modifier = Modifier.padding(horizontal = 12.dp),
+                        modifier = Modifier.padding(horizontal = 16.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {

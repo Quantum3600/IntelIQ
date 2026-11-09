@@ -6,11 +6,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.techbrains.inteliq.presentation.navigation.ScreenDestination
 import com.techbrains.inteliq.presentation.theme.styles.ButtonGroupPosition
 import com.techbrains.inteliq.presentation.theme.styles.ButtonStyles
 import com.techbrains.inteliq.presentation.theme.styles.CardStyles
 import com.techbrains.inteliq.presentation.theme.styles.ChipStyles
 import com.techbrains.inteliq.presentation.theme.styles.ListItemPosition
+import com.techbrains.inteliq.presentation.theme.styles.NavLayoutType
+import com.techbrains.inteliq.presentation.theme.styles.NavShapeQuad
 import com.techbrains.inteliq.presentation.theme.styles.NavigationStyles
 import com.techbrains.inteliq.presentation.theme.styles.SwitchStyles
 import com.techbrains.inteliq.presentation.theme.styles.TextFieldStyles
@@ -18,6 +21,8 @@ import com.techbrains.inteliq.presentation.theme.styles.TextFieldStyles
 /** Re-export position enums for backward compatibility */
 typealias ListItemPosition = ListItemPosition
 typealias ButtonGroupPosition = ButtonGroupPosition
+typealias NavLayoutType = NavLayoutType
+typealias NavShapeQuad = NavShapeQuad
 
 /**
  * Unified facade object delegating to modular style files in `presentation/theme/styles/`.
@@ -63,6 +68,21 @@ object ComponentStyles {
 
     val profileCardStyle: Style
         @Composable get() = NavigationStyles.profileCardStyle
+
+    @Composable
+    fun rememberAnimatedNavItemShape(
+        destination: ScreenDestination.Main,
+        isSelected: Boolean,
+        layoutType: NavLayoutType = NavLayoutType.DRAWER,
+        selectedCornerRadius: Dp = 28.dp,
+        customUnselectedCorners: NavShapeQuad? = null
+    ): Shape = NavigationStyles.rememberAnimatedNavItemShape(
+        destination = destination,
+        isSelected = isSelected,
+        layoutType = layoutType,
+        selectedCornerRadius = selectedCornerRadius,
+        customUnselectedCorners = customUnselectedCorners
+    )
 
     val logoutButtonStyle: Style
         @Composable get() = NavigationStyles.logoutButtonStyle

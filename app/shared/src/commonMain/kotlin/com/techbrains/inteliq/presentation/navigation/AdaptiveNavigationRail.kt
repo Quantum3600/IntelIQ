@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.style.ExperimentalFoundationStyleApi
 import androidx.compose.foundation.style.styleable
 import androidx.compose.material.icons.Icons
@@ -45,6 +44,7 @@ import com.techbrains.inteliq.presentation.theme.ComponentStyles
 import com.techbrains.inteliq.presentation.theme.DarkThemeMode
 import com.techbrains.inteliq.presentation.theme.IntelIQTheme
 import com.techbrains.inteliq.presentation.theme.LocalHazeState
+import com.techbrains.inteliq.presentation.theme.styles.NavLayoutType
 import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.glass.GlassStyle
@@ -129,13 +129,13 @@ fun AdaptiveNavigationRail(
                 .forEach { item ->
                     val isSelected = currentTab == item.destination
                     val interactionSource = remember { MutableInteractionSource() }
-                    val itemShape = when(item.destination) {
-                        ScreenDestination.Main.Home -> RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp, bottomStart = 8.dp, bottomEnd = 8.dp)
-                        ScreenDestination.Main.Practice -> RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp, topStart = 8.dp, topEnd = 8.dp)
-                        else -> RoundedCornerShape(8.dp)
-                    }
+                    val itemShape = ComponentStyles.rememberAnimatedNavItemShape(
+                        destination = item.destination,
+                        isSelected = isSelected,
+                        layoutType = NavLayoutType.RAIL
+                    )
                     val backgroundModifier = if (isSelected) {
-                        modifier.clip(itemShape)
+                        Modifier.clip(itemShape)
                             .stardustMeshAnimation(
                                 2, 2, colors = listOf(
                                     MaterialTheme.colorScheme.primaryContainer,
@@ -144,7 +144,7 @@ fun AdaptiveNavigationRail(
                                     MaterialTheme.colorScheme.tertiary
                                 ), 0.8f, 0.2f, 32
                             )
-                    } else modifier.clip(itemShape).background(MaterialTheme.colorScheme.surfaceVariant)
+                    } else Modifier.clip(itemShape).background(MaterialTheme.colorScheme.surfaceVariant)
                     val navItemStyle = if (isSelected) {
                         ComponentStyles.selectedNavItemStyle(shape = itemShape)
                     } else {
